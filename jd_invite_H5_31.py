@@ -73,9 +73,6 @@ def list_of_groups(init_list, children_list_len):
     end_list.append(init_list[-count:]) if count != 0 else end_list
     return end_list
 def H5API(functionId, body, cookie, appId):
-    # ua = userAgent()
-    # ua = random.choice(USER_AGENTS)
-    # ua = 'jdltapp;iPhone;4.2.0;;;M/5.0;hasUPPay/0;pushNoticeIsOpen/1;lang/zh_CN;hasOCPay/0;appBuild/1217;supportBestPay/0;jdSupportDarkMode/0;ef/1;ep/%7B%22ciphertype%22%3A5%2C%22cipher%22%3A%7B%22ud%22%3A%22CJGzCwS1ZQCmDzYmYzrsYJU5Y2Y1ZWGmDWZrZtO2YzHuCzHuYwC5Cq%3D%3D%22%2C%22sv%22%3A%22CJYkDM4n%22%2C%22iad%22%3A%22%22%7D%2C%22ts%22%3A1685502010%2C%22hdid%22%3A%22M1j35qhispl99TdfCvaiQodeZDjJzRZ5%5C%2F8PEE1%5C%2Fv0I4%3D%22%2C%22version%22%3A%221.0.3%22%2C%22appname%22%3A%22com.jd.jdmobilelite%22%2C%22ridx%22%3A1%7D;Mozilla/5.0 (iPhone; CPU iPhone OS 16_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1;'
     if verify != True:
         sys.exit('❌授权未通过 程序自动退出！！！')
     ua = generate_random_user_agent()
