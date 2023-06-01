@@ -89,38 +89,6 @@ def printf(cookie, T):
         pt_pin = unquote_plus(pt_pin)
     print(f"{str(datetime.datetime.now())[0:22]}->{pt_pin}->{T}")
 
-
-def tg_bot(msg, urla, chatid):
-    try:
-        localtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-        token = '5745523514:AAHHj2A0WnXiALOZ-7aantHrjKxrZBzHeZ0'
-        url = f'https://api.telegram.org/bot{token}/sendMessage'
-        button1_text = "链接地址"
-        button1_url = f"{urla}"
-        button_data = {
-            "inline_keyboard": [[
-                {
-                    "text": button1_text,
-                    "url": button1_url
-                }]
-            ]
-        }
-        reply_markup = json.dumps(button_data)
-        body = {
-            'chat_id': f'{chatid}',
-            'text': f'{msg}\n\n推送时间:{localtime}',
-            'disable_web_page_preview': 'true',
-            'parse_mode': "html",
-            'reply_markup': reply_markup
-        }
-        repo = requests.get(url, body).json()
-        if repo['ok']:
-            print(f'Telegram发送通知消息成功🎉。 当前时间{localtime}')
-        elif repo['error_code']:
-            print(f'telegram发送通知消息失败！！{repo}\n')
-    except Exception as e:
-        print(f'tg_bot 错误 {e}')
-
 def getUUID(x="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", t=0):
     if isinstance(x, int):
         x = "x" * x
