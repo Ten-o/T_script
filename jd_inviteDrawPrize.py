@@ -284,7 +284,7 @@ if __name__ == '__main__':
                     printf(cookie, f"{amount}现金 ❌提现错误:{cashInfo['status']} {cashInfo['message']}")
             else:
                 continue
-        time.sleep(5)
+        time.sleep(10)
     print(f"\n****************提现结束,成功提现{'{:.2f}'.format(sum([float(x) for x in successful]))}元****************\n")
     if len(data_dict) != 0:
         print(f"****************有{len(data_dict)}笔未成功提现, 重新发起提现****************")
