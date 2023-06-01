@@ -183,7 +183,7 @@ def main():
             threads.append(thead_one)  # 线程池添加线程
         for t in threads:
             t.start()
-            time.sleep(1.5)
+            time.sleep(2)
             if exit_event.is_set():
                 sys.exit('403 程序自动退出！！！')
         for t in threads:
