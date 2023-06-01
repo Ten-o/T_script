@@ -10,7 +10,8 @@ new Env('邀好友赢现金-助理');
 import sys
 from jdCookie import *
 from utils.UTIL import *
-from utils.UTIL import *
+from utils.X_API_EID_TOKEN import *
+from utils.User_agent import generate_random_user_agent
 try:
     from utils.TEN_UTIL import *
 except:
@@ -19,17 +20,19 @@ except:
     from utils.TEN_UTIL import *
 
 
+
 start = time.time()
 
 
+
 #scode  定义 1为特价 2为京东
-TEN_TOKEN = os.environ.get("TEN_TOKEN") if os.environ.get("TEN_TOKEN") else sys.exit('❌未获取到TEN_TOKEN变量 程序自动退出')
+TEN_TOKEN = os.environ.get("TEN_TOKEN") if os.environ.get("TEN_TOKEN") else sys.exit('未获取到你的TEN_TOKEN')
 TEN_inviter = os.environ.get("TEN_inviter") if os.environ.get("TEN_inviter") else False
 TEN_scode = os.environ.get("TEN_scode") if os.environ.get("TEN_scode") else 1
 
 
-
-
+threadsNum = 50
+exit_event = threading.Event()
 
 try:
     getCk = get_cookies()
@@ -63,58 +66,134 @@ def convert_ms_to_hours_minutes(milliseconds):
     return f'{hours}:{minutes}'
 
 
+def list_of_groups(init_list, children_list_len):
+    list_of_groups = zip(*(iter(init_list),) * children_list_len)
+    end_list = [list(i) for i in list_of_groups]
+    count = len(init_list) % children_list_len
+    end_list.append(init_list[-count:]) if count != 0 else end_list
+    return end_list
+def H5API(functionId, body, cookie, appId):
+    # ua = userAgent()
+    # ua = random.choice(USER_AGENTS)
+    # ua = 'jdltapp;iPhone;4.2.0;;;M/5.0;hasUPPay/0;pushNoticeIsOpen/1;lang/zh_CN;hasOCPay/0;appBuild/1217;supportBestPay/0;jdSupportDarkMode/0;ef/1;ep/%7B%22ciphertype%22%3A5%2C%22cipher%22%3A%7B%22ud%22%3A%22CJGzCwS1ZQCmDzYmYzrsYJU5Y2Y1ZWGmDWZrZtO2YzHuCzHuYwC5Cq%3D%3D%22%2C%22sv%22%3A%22CJYkDM4n%22%2C%22iad%22%3A%22%22%7D%2C%22ts%22%3A1685502010%2C%22hdid%22%3A%22M1j35qhispl99TdfCvaiQodeZDjJzRZ5%5C%2F8PEE1%5C%2Fv0I4%3D%22%2C%22version%22%3A%221.0.3%22%2C%22appname%22%3A%22com.jd.jdmobilelite%22%2C%22ridx%22%3A1%7D;Mozilla/5.0 (iPhone; CPU iPhone OS 16_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1;'
+    if verify != True:
+        sys.exit('❌授权未通过 程序自动退出！！！')
+    ua = generate_random_user_agent()
+    try:
+        pt_pin = re.compile(r'pt_pin=(.*?);').findall(cookie)[0]
+        pt_pin = unquote_plus(pt_pin)
+    except IndexError:
+        pt_pin = re.compile(r'pin=(.*?);').findall(cookie)[0]
+        pt_pin = unquote_plus(pt_pin)
+
+    headers = {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "zh-cn",
+        "Connection": "keep-alive",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Host": "api.m.jd.com",
+        "Referer": "https://prodev.m.jd.com/",
+        "Origin": "https://prodev.m.jd.com",
+        "Cookie": cookie,
+        "User-Agent": ua
+    }
+
+    urla = 'https://ten.ouklc.com/h5st'
+    params = {
+        'functionId': functionId,
+        'body': json.dumps(body),
+        'ua': ua,
+        'pin': pt_pin,
+        'appId': appId
+    }
+    response = requests.get(urla, params=params)
+    if response.status_code == 200:
+        result = response.json()
+        uuid="5616237366134353-4383338333661383"
+        uuid = getUUID("xxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxx")
+        body = result['body'] + "&x-api-eid-token="+x_api_eid_token(ua, cookie) + f"&uuid={uuid}&"
+        body += "&build=1217&screen=390*844&networkType=3g&d_brand=iPhone&d_model=iPhone14,5&lang=zh_CN&osVersion=16.4.1&partner=-1&cthr=1"
+        url = "https://api.m.jd.com"
+        response = requests.post(url, headers=headers, data=body)
+
+        return response
+
+
+def Result(inviter,cookie):
+    response = H5API("inviteFissionBeforeHome", {'linkId':linkId, "isJdApp":True, 'inviter':inviter}, cookie, '02f8d')
+    if int(response.status_code) != int(200):
+        print(f'inviteFissionBeforeHome 接口：{response.status_code}')
+        exit_event.set()
+        return
+    if int(response.json()['code']) == 0:
+        if response.json()['data']['helpResult'] == 1:
+            msg = '✅助力成功'
+            power_success.append(cookie)
+        elif response.json()['data']['helpResult'] == 6:
+            msg = '❌已助力'
+            power_failure.append(cookie)
+        elif response.json()['data']['helpResult'] == 3:
+            msg = '❌没有助力次数'
+            power_failure.append(cookie)
+        elif response.json()['data']['helpResult'] == 4:
+            msg = '❌助力次数用尽'
+            power_failure.append(cookie)
+        elif response.json()['data']['helpResult'] == 2:
+            msg = '❌活动火爆'
+            power_failure.append(cookie)
+        else:
+            msg = '❌未知状态'
+            power_failure.append(cookie)
+        printf(cookie,
+               f"{response.status_code}  助力 →→ {response.json()['data']['nickName']} {msg}")
+    else:
+        printf(cookie, f"{response.json()['code']} →→ 💔{response.json()['errMsg']}")
+        not_log.append(cookie)
+
+
+
 
 def main():
-    response = H5API('POST', "inviteFissionBeforeHome", {'linkId': linkId, "isJdApp": True, 'inviter': stats.json()['inviter']}, cks[0],'02f8d')
-    if response[1]['data']['helpResult'] == 1:
+    if verify != True:
+        sys.exit('❌授权未通过 程序自动退出！！！')
+    cookie = cks[0]
+    response = H5API("inviteFissionBeforeHome", {'linkId': linkId, "isJdApp": True, 'inviter': stats.json()['inviter']}, cookie,'02f8d')
+    print(response.json())
+    if response.json()['data']['helpResult'] == 1:
         printf(cks[0], '✅助力作者成功 谢谢你 你是个好人！！！')
     else:
         printf(cks[0],'❌助理作者失败 下次记得把助理留给我 呜呜呜！！！')
         time.sleep(2)
-
     if TEN_inviter == False:
-        response = H5API('POST','inviteFissionHome', {'linkId': linkId, "inviter": "", }, cks[0], 'af89e')
-        if response == 900:
-            sys.exit('❌授权未通过 程序自动退出！！！')
-        printf(cks[0],
-               f'⏰剩余时间:{convert_ms_to_hours_minutes(response[1]["data"]["countDownTime"])} 🎉已获取助力:{response[1]["data"]["prizeNum"] + response[1]["data"]["drawPrizeNum"]}次 ✅【助力码】:{response[1]["data"]["inviter"]}')
-        inviter = response[1]["data"]["inviter"]
-        time.sleep(3)
+        response = H5API('inviteFissionHome', {'linkId': linkId, "inviter": "", }, cookie, 'af89e').json()
+        printf(cookie,
+               f'⏰剩余时间:{convert_ms_to_hours_minutes(response["data"]["countDownTime"])} 🎉已获取助力:{response["data"]["prizeNum"] + response["data"]["drawPrizeNum"]}次 ✅【助力码】:{response["data"]["inviter"]}')
+        inviter = response["data"]["inviter"]
     else:
         inviter = TEN_inviter
-    print(f"****************开始助理****************")
-    for i, cookie in enumerate(cks[1:], 1):
-        response = H5API('POST',"inviteFissionBeforeHome", {'linkId': linkId, "isJdApp": True, 'inviter': inviter}, cookie, '02f8d')
-        if response[0] == 900:
-            sys.exit('❌授权未通过 程序自动退出！！！')
-        res = response[1]
-        if int(res['code']) == int(0):
-            if res['data']['helpResult'] == 1:
-                msg = '✅助力成功'
-                power_success.append(cookie)
-            elif res['data']['helpResult'] == 6:
-                msg = '❌已助力'
-                power_failure.append(cookie)
-            elif res['data']['helpResult'] == 3:
-                msg = '❌没有助力次数'
-                power_failure.append(cookie)
-            elif res['data']['helpResult'] == 4:
-                msg = '❌助力次数用尽'
-                power_failure.append(cookie)
-            elif res['data']['helpResult'] == 2:
-                msg = '❌活动火爆'
-                power_failure.append(cookie)
-                time.sleep(10)
-            else:
-                msg = '❌未知状态'
-                power_failure.append(cookie)
-            printf(cookie, f" 200  →→ 第{i}位 →→ 去助力 →→ {res['data']['nickName']} {msg}")
-        else:
-            printf(cookie, f" {res['code']} →→ 第{i}位 →→  💔{res['errMsg']}")
-            not_log.append(cookie)
-            time.sleep(5)
+    time.sleep(1)
+    new_cks = list_of_groups(cks[1:len(cks)], threadsNum)
+    for i, cookies in enumerate(new_cks, 1):
+        print(f"\n##############并发第{i}组ck##############")
+        threads = []
+        print(f"****************提取{len(cookies) if cookies else 0}个COOKIE****************")
+        for index, cookie in enumerate(cookies, 1):
+            if exit_event.is_set():
+                # Event被设置，停止启动后续线程
+                sys.exit('403 程序自动退出！！！')
+            thead_one = threading.Thread(target=Result, args=(inviter, cookie))
+            threads.append(thead_one)  # 线程池添加线程
+        for t in threads:
+            t.start()
+            time.sleep(1.5)
+            if exit_event.is_set():
+                sys.exit('403 程序自动退出！！！')
+        for t in threads:
+            t.join()
     print(
-        f'\n\n##############清点人数##############\n  ✅助力成功:{len(power_success)}人 ❌助力失败:{len(power_failure)}人 💔未登录COOOKIE{len(not_log)}\n  ⏰耗时:{time.time() - start}')
+        f'\n\n\n##############清点人数##############\n  ✅助力成功:{len(power_success)}人 ❌助力失败:{len(power_failure)}人 💔未登录CK{len(not_log)}人 \n  ⏰耗时:{time.time() - start}')
+
 
 if __name__ == '__main__':
     main()
