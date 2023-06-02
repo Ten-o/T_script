@@ -134,9 +134,7 @@ def H5API(functionId, body, cookie, appId):
         result = response.json()
         uuid="5616237366134353-4383338333661383"
         uuid = getUUID("xxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxx")
-        body = result['body'] + "&x-api-eid-token="+x_api_eid_token(ua, cookie) + f"&uuid={uuid}&"
-        body += "&build=1217&screen=390*844&networkType=3g&d_brand=iPhone&d_model=iPhone14,5&lang=zh_CN&osVersion=16.4.1&partner=-1&cthr=1"
-        url = "https://api.m.jd.com"
+        body = result['body']
         response = requests.post(url, headers=headers, data=body)
 
         return response
