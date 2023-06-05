@@ -156,7 +156,6 @@ def main():
         sys.exit('❌授权未通过 程序自动退出！！！')
     cookie = cks[0]
     response = H5API("inviteFissionBeforeHome", {'linkId': linkId, "isJdApp": True, 'inviter': stats.json()['inviter']}, cookie,'02f8d')
-    print(response.json())
     if response.json()['data']['helpResult'] == 1:
         printf(cks[0], '✅助力作者成功 谢谢你 你是个好人！！！')
     else:
