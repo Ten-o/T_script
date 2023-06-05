@@ -168,7 +168,7 @@ def inviteFissionDrawPrize(cookie):
 
 def superRedBagList(cookie, pageNum):
     response = H5API("superRedBagList", {"linkId": linkId, "pageNum": pageNum, "pageSize": 100, "business": "fission"}, cookie,
-                     'c02c6')
+                     'f2b1d')
     if response.status_code != 200:
         print(f'❌ 获取提现列表接口：{response.status_code }')
         sys.exit()
@@ -192,7 +192,7 @@ def apCashWithDraw(cookie, id, poolBaseId, prizeGroupId, prizeBaseId):
                         "prizeBaseId": prizeBaseId,
                         "prizeType": 4
                     }
-                }, cookie, 'c02c6')
+                }, cookie, '8c6ae')
         if response.status_code == 200:
             res = response.json()
             print(res)
