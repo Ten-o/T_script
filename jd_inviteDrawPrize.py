@@ -137,7 +137,8 @@ def H5API(functionId, body, cookie, appId):
         body = result['body']
         url = "https://api.m.jd.com"
         response = requests.post(url, headers=headers, data=body)
-
+        print(response.status_code)
+        print(response.json())
         return response
 
 def inviteFissionDrawPrize(cookie):
