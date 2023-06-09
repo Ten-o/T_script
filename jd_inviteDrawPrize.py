@@ -12,6 +12,7 @@ from urllib.parse import  unquote, unquote_plus
 from utils.UTIL import *
 from utils.User_agent import *
 from utils.X_API_EID_TOKEN import *
+from jdCookie import *
 try:
     from utils.TEN_UTIL import *
 except:
@@ -20,8 +21,10 @@ except:
     from utils.TEN_UTIL import *
 
 
+
+
 NUMBER_OF = os.environ.get("draw_numer") if os.environ.get("draw_numer") else 3
-cookie = os.environ.get("draw_cookie") if os.environ.get("draw_cookie") else sys.exit('❌未获取到draw_cookie变量 程序自动退出')
+cookie = os.environ.get("draw_cookie") if os.environ.get("draw_cookie") else get_cookies()[0]
 TEN_TOKEN = os.environ.get("TEN_TOKEN") if os.environ.get("TEN_TOKEN") else sys.exit('❌未获取到TEN_TOKEN变量 程序自动退出')
 TEN_scode = os.environ.get("TEN_scode") if os.environ.get("TEN_scode") else 1
 
