@@ -132,8 +132,6 @@ def H5API(functionId, body, cookie, appId):
     response = requests.get(urla, params=params)
     if response.status_code == 200:
         result = response.json()
-        uuid="5616237366134353-4383338333661383"
-        uuid = getUUID("xxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxx")
         body = result['body']
         url = "https://api.m.jd.com"
         response = requests.post(url, headers=headers, data=body)
