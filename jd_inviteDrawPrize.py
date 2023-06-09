@@ -21,7 +21,7 @@ except:
 
 
 NUMBER_OF = os.environ.get("draw_numer") if os.environ.get("draw_numer") else 3
-cookie = os.environ.get("draw_cookie") if os.environ.get("draw_cookie") else 'pt_key=AAJkZlDwADA-nK-8-2oECLd0doHItVJmxpFz2Z9JDU81SplTUXGZQbs3fBdm1IoHFYiOAl-RME8;pt_pin=jd_625e49270164b;'
+cookie = os.environ.get("draw_cookie") if os.environ.get("draw_cookie") else sys.exit('❌未获取到draw_cookie变量 程序自动退出')
 TEN_TOKEN = os.environ.get("TEN_TOKEN") if os.environ.get("TEN_TOKEN") else sys.exit('❌未获取到TEN_TOKEN变量 程序自动退出')
 TEN_scode = os.environ.get("TEN_scode") if os.environ.get("TEN_scode") else 1
 
@@ -137,8 +137,7 @@ def H5API(functionId, body, cookie, appId):
         body = result['body']
         url = "https://api.m.jd.com"
         response = requests.post(url, headers=headers, data=body)
-        print(response.status_code)
-        print(response.json())
+
         return response
 
 def inviteFissionDrawPrize(cookie):
