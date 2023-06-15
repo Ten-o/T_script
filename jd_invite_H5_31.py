@@ -29,6 +29,7 @@ start = time.time()
 TEN_TOKEN = os.environ.get("TEN_TOKEN") if os.environ.get("TEN_TOKEN") else sys.exit('未获取到你的TEN_TOKEN')
 TEN_inviter = os.environ.get("TEN_inviter") if os.environ.get("TEN_inviter") else False
 TEN_scode = os.environ.get("TEN_scode") if os.environ.get("TEN_scode") else 1
+proxy = os.environ.get("Ten_proxy") if os.environ.get("Ten_proxy") else False
 
 
 threadsNum = 50
@@ -112,7 +113,10 @@ def H5API(functionId, body, cookie, appId):
         body = result['body'] + "&x-api-eid-token="+x_api_eid_token(ua, cookie) + f"&uuid={uuid}&"
         body += "&build=1217&screen=390*844&networkType=3g&d_brand=iPhone&d_model=iPhone14,5&lang=zh_CN&osVersion=16.4.1&partner=-1&cthr=1"
         url = "https://api.m.jd.com"
-        response = requests.post(url, headers=headers, data=body)
+        if proxy == False:
+            response = requests.post(url, headers=headers, data=body)
+        else:
+            response = requests.post(url, headers=headers, data=body, proxies=proxy)
 
         return response
 
@@ -182,9 +186,10 @@ def main():
             threads.append(thead_one)  # 线程池添加线程
         for t in threads:
             t.start()
-            time.sleep(2)
-            if exit_event.is_set():
-                sys.exit('403 程序自动退出！！！')
+            if proxy == False:
+                time.sleep(2)
+                if exit_event.is_set():
+                    sys.exit('403 程序自动退出！！！')
         for t in threads:
             t.join()
     print(
