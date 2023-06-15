@@ -30,6 +30,7 @@ TEN_TOKEN = os.environ.get("TEN_TOKEN") if os.environ.get("TEN_TOKEN") else sys.
 TEN_inviter = os.environ.get("TEN_inviter") if os.environ.get("TEN_inviter") else False
 TEN_scode = os.environ.get("TEN_scode") if os.environ.get("TEN_scode") else 1
 proxy = os.environ.get("Ten_proxy") if os.environ.get("Ten_proxy") else False
+
 threadsNum = 20
 
 exit_event = threading.Event()
@@ -115,7 +116,11 @@ def H5API(functionId, body, cookie, appId):
         if proxy == False:
             response = requests.post(url, headers=headers, data=body)
         else:
-            response = requests.post(url, headers=headers, data=body, proxies=proxy)
+            proxies = {
+                    'http': f'{proxy}',
+                    'https': f'{proxy}',
+                }
+            response = requests.post(url, headers=headers, data=body, proxies=proxies)
 
         return response
 
