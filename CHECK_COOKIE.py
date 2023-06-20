@@ -67,7 +67,6 @@ async def handling():
         cookie = i.replace("\n", "")
         date = await request_interface(cookie)
         printf(f'第{would}个工具人',cookie, f'{date}')
-        time.sleep(0.5)
     result = set(effective_ck)
     print(f"✅有效：{result}\n\n\n❌无效：{invalid_ck}\n\n有效COOKIE开始写入{filename}文件\n\n\n✅有效COOKIE:{len(result)}  ❌重复COOKIE：{stack-len(result)-len(invalid_ck)}  ❌无效COOKIE:{len(invalid_ck)}")
     for i in result:

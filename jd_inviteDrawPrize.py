@@ -263,7 +263,7 @@ if __name__ == '__main__':
             #     print('24小时内的提现记录已检测完毕')
             #     wamst = False
             #     break
-            if int(i) >= 100:
+            if int(i) >= 50:
                 wamst = False
                 break
 
@@ -284,7 +284,7 @@ if __name__ == '__main__':
                     printf(cookie, f"{amount}现金 ❌提现错误:{cashInfo['status']} {cashInfo['message']}")
             else:
                 continue
-        time.sleep(10)
+        time.sleep(2)
     print(f"\n****************提现结束,成功提现{'{:.2f}'.format(sum([float(x) for x in successful]))}元****************\n")
     if len(data_dict) != 0:
         print(f"****************有{len(data_dict)}笔未成功提现, 重新发起提现****************")
@@ -297,5 +297,5 @@ if __name__ == '__main__':
             else:
                 printf(cookie, f"❌提现错误:{cashInfo['status']} {cashInfo['message']}")
 
-            time.sleep(6)
+            time.sleep(2)
     print(f"\n****************提现结束,开始清点****************\n  🎁共抽奖{total}次  🧧获得:{'{:.2f}'.format(sum([float(x) for x in redpacket]))}元红包\n  💵获得{total_amount}元现金 ✅成功提现:{'{:.2f}'.format(sum([float(x) for x in successful]))}元")
