@@ -36,7 +36,7 @@ class JD_PDD():
         self.inviter = os.environ.get("TEN_inviter") if os.environ.get("TEN_inviter") else False
         self.scode = os.environ.get("TEN_scode") if os.environ.get("TEN_scode") else 1
         self.proxy = os.environ.get("TEN_proxy") if os.environ.get("TEN_proxy") else False
-        self.threadsNum = os.environ.get("TEN_threadsNum") if os.environ.get("TEN_threadsNum") else 50
+        self.threadsNum = int(os.environ.get("TEN_threadsNum") if os.environ.get("TEN_threadsNum") else 50)
         self.power_success = []
         self.power_failure = []
         self.not_log = []
