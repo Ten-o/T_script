@@ -10,8 +10,7 @@
   <!-- knock code pictures 敲代码的图片 -->
   <img src="https://media.giphy.com/media/SWoSkN6DxTszqIKEqv/giphy.gif" alt="Coder GIF" width="500">
 </div>
-#  🙋 Hello, 下面是变量的介绍 
-<table>
+
 | 变量 | 备注 |
 | --- | --- |
 | `TEN_TOKEN`   | 设置校验TOKEN  |
