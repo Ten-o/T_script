@@ -10,3 +10,10 @@
   <!-- knock code pictures 敲代码的图片 -->
   <img src="https://media.giphy.com/media/SWoSkN6DxTszqIKEqv/giphy.gif" alt="Coder GIF" width="500">
 </div>
+
+
+##变量
+| 变量 | 备注 |
+| --- | --- |
+| `Ten_proxy` | 设置代理池 |
+| git diff | Show file differences that haven't been staged |
