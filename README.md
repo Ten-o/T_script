@@ -10,13 +10,8 @@
   <!-- knock code pictures 敲代码的图片 -->
   <img src="https://media.giphy.com/media/SWoSkN6DxTszqIKEqv/giphy.gif" alt="Coder GIF" width="500">
 </div>
-| Command | Description |
-| --- | --- |
-| git status | List all new or modified files |
-| git diff | Show file differences that haven't been staged |
 
-
-| First Header  | Second Header |
+| 变量 | 备注 |
 | ------------- | ------------- |
-| Content Cell  | Content Cell  |
+| `git status`   | Content Cell  |
 | Content Cell  | Content Cell  |
