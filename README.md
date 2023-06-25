@@ -10,9 +10,10 @@
   <!-- knock code pictures 敲代码的图片 -->
   <img src="https://media.giphy.com/media/SWoSkN6DxTszqIKEqv/giphy.gif" alt="Coder GIF" width="500">
 </div>
-
+#  🙋 Hello, 下面是变量的介绍 
+<table>
 | 变量 | 备注 |
-| ------------- | ------------- |
+| --------------- | --------------- |
 | `TEN_TOKEN`   | 设置校验TOKEN  |
 | `TEN_inviter`   | 设置助理码 默认取车头  |
 | `TEN_scode`   | 设置活动id  默认1 就是特价版本  |
