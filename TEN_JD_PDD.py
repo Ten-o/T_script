@@ -59,7 +59,7 @@ class JD_PDD():
         try:
             self.stats = stats()
             if self.stats.status_code != False:
-                self.linkId = self.stats.json()[f'linkId{self.scode}']
+                self.linkId = self.stats.json()[f'linkId'][int(self.scode - 1)]
         except Exception as e:
             print(f'从云端获取inviter失败： {e}')
 
