@@ -10,3 +10,17 @@
   <!-- knock code pictures 敲代码的图片 -->
   <img src="https://media.giphy.com/media/SWoSkN6DxTszqIKEqv/giphy.gif" alt="Coder GIF" width="500">
 </div>
+
+#  🙋 Hello 变量介绍
+
+<table>
+
+| 变量 | 备注 |
+| :------:  | :------ |
+| `TEN_TOKEN`   | 设置校验TOKEN  |
+| `TEN_inviter`   | 设置助理码 默认取车头  |
+| `TEN_scode`   | 设置活动id  默认1 就是特价版本  |
+| `TEN_proxy`   | 设置代理池地址 并发需要设置代理池 负责不会并发  |
+| `TEN_threadsNum`   | 设置并发线程  |
+| `draw_numer`   | 抽奖几次没水退出 默认3次  |
+| `draw_cookie`   | 设置抽奖COOKIE  |
