@@ -35,14 +35,13 @@ data_dict = {}
 ua = generate_random_user_agent()
 
 verify = verify(TEN_TOKEN)
-print(verify)
 if verify != True:
     sys.exit('❌授权未通过 程序自动退出！！！')
 
 
 stats = stats()
 if stats.status_code != False:
-    linkId = stats.json()[f'linkId'][int(self.scode - 1)]
+    linkId = stats.json()[f'linkId'][int(TEN_scode) - 1]
 
 
 def base64Encode(string):
@@ -257,8 +256,8 @@ if __name__ == '__main__':
             prizeGroupId = item['prizeGroupId']
             poolBaseId = item['poolBaseId']
             prizeBaseId = item['prizeBaseId']
-            date_obj = datetime.datetime.strptime(item['startTime'], "%Y-%m-%d %H:%M:%S")
-            delta = datetime.datetime.now() - date_obj
+            # date_obj = datetime.datetime.strptime(item['startTime'], "%Y-%m-%d %H:%M:%S")
+            # delta = datetime.datetime.now() - date_obj
             # if delta >= datetime.timedelta(hours=24):
             #     print('24小时内的提现记录已检测完毕')
             #     wamst = False
