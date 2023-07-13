@@ -42,7 +42,7 @@ if verify != True:
 
 stats = stats()
 if stats.status_code != False:
-    linkId = stats.json()[f'linkId{TEN_scode}']
+    linkId = stats.json()[f'linkId'][int(self.scode - 1)]
 
 
 def base64Encode(string):
