@@ -62,6 +62,7 @@ class JD_PDD():
                 self.linkId = self.stats.json()[f'linkId{self.scode}']
         except Exception as e:
             print(f'从云端获取inviter失败： {e}')
+
     def convert_ms_to_hours_minutes(self,milliseconds):
         seconds = milliseconds // 1000
         minutes, seconds = divmod(seconds, 60)
@@ -97,7 +98,6 @@ class JD_PDD():
             "Cookie": cookie,
             "User-Agent": ua
         }
-
         url = 'https://ten.ouklc.com/h5st'
         params = {
             'functionId': functionId,
@@ -108,8 +108,6 @@ class JD_PDD():
         }
         try:
             response = requests.get(url, params=params, timeout=5)
-
-
         except Exception as e:
             if isinstance(e, requests.exceptions.Timeout):
                 print(f"h5st 获取超时：{e}")
@@ -139,6 +137,7 @@ class JD_PDD():
             else:
                 print(f'助理失败：{e}')
             return False
+
     def Result(self,inviter, cookie):
         try:
             if self.verify != True:
