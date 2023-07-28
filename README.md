@@ -24,3 +24,5 @@
 | `TEN_threadsNum`   | 设置并发线程  |
 | `draw_numer`   | 抽奖几次没水退出 默认3次  |
 | `draw_cookie`   | 设置抽奖COOKIE  |
+| `jd_loreal_Daily`   | 每日抢  |
+
