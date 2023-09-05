@@ -222,17 +222,20 @@ if __name__ == '__main__':
             printf(cookie, f"{info[0]} ⏰本场活动已结束了,快去重新开始吧")
             sys.exit()
         if info:
-            total += 1
-            if info[2] == 1:
-                printf(cookie, f"{info[0]} 🎫获得{info[1]}优惠券")
-                MEASURE_WATER.append(info[1])
-            elif info[2] == 2:
-                printf(cookie, f"{info[0]} 🧧获得{info[1]}红包")
-                redpacket.append(info[1])
-                MEASURE_WATER.append(info[1])
-            else:
-                printf(cookie, f"{info[0]} 💵获得{info[1]}现金")
-                cash.append(info[1])
+            try:
+                total += 1
+                if info[2] == 1:
+                    printf(cookie, f"{info[0]} 🎫获得{info[1]}优惠券")
+                    MEASURE_WATER.append(info[1])
+                elif info[2] == 2:
+                    printf(cookie, f"{info[0]} 🧧获得{info[1]}红包")
+                    redpacket.append(info[1])
+                    MEASURE_WATER.append(info[1])
+                else:
+                    printf(cookie, f"{info[0]} 💵获得{info[1]}现金")
+                    cash.append(info[1])
+            except Exception as e:
+                printf(cookie, f"未知错误(可能是惊喜礼包) {e}")
         if len(MEASURE_WATER) >= int(NUMBER_OF):
             if len(cash) < 1:
                 sys.exit(f'❌未抽中现金 可能没水 已自动退出！！！')
