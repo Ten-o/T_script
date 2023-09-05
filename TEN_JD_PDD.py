@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-""#line:9
+# -*- coding: utf-8 -*-
+"""
+File: TEN_JD_PDD.py(邀好友赢现金-助理)
+cron: 1 1 1 1 1 1
+new Env('邀好友赢现金-助理');
+@author: 𝓣𝓮𝓷 𝓸'𝓬𝓵𝓸𝓬𝓴
+@software: PyCharm
+@file: TEN_JD_PDD.py
+"""
+
 from utils .logger import setup_logger #line:11
 from utils .X_API_EID_TOKEN import *#line:12
 from utils .User_agent import generate_random_user_agent #line:13
