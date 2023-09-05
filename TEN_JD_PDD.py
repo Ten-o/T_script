@@ -34,7 +34,7 @@ class TEN_JD_PDD :#line:25
         OO0000O000O0OO0OO .exit_event =threading .Event ()#line:38
         OO0000O000O0OO0OO .coookie =ck [0 ]#line:39
         OO0000O000O0OO0OO .helpResult ={(1 ,'✅助力成功'),(2 ,'❌活动火爆'),(3 ,'❌没有助力次数'),(4 ,'❌助力次数用尽'),(6 ,'❌已助力')}#line:46
-        OO0000O000O0OO0OO .verify_result =False #line:47
+        OO0000O000O0OO0OO .verify_result = False #line:47
         OO0000O000O0OO0OO .linkId =[]#line:48
         OO0000O000O0OO0OO .inviter_help =''#line:49
         OO0000O000O0OO0OO .version ='1.3.0'#line:50
@@ -228,9 +228,12 @@ class TEN_JD_PDD :#line:25
             OOO00000O0O0OOO0O .log .info (f"##############开始任务##############")#line:284
             for OO0OOOOO000OO00OO ,OO0OOO00000OOO0OO in enumerate (ck ,1 ):#line:285
                 await OOO00000O0O0OOO0O .Result (OOO00000O0O0OOO0O .inviter ,OO0OOO00000OOO0OO )#line:286
+                await asyncio.sleep(0.5)
+
         OOO00000O0O0OOO0O .log .info (f"##############清点人数##############")#line:288
         OOO00000O0O0OOO0O .log .info (f"✅助力成功:{len(OOO00000O0O0OOO0O.power_success)}人 ❌助力失败:{len(OOO00000O0O0OOO0O.power_failure)}人 💔未登录CK{len(OOO00000O0O0OOO0O.not_log)}人")#line:289
         OOO00000O0O0OOO0O .log .info (f" ⏰耗时:{time.time() - OOO00000O0O0OOO0O.start}")#line:290
+
 if __name__ =='__main__':#line:292
     pdd =TEN_JD_PDD ()#line:293
     loop =asyncio .get_event_loop ()#line:294
