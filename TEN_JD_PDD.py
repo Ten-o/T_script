@@ -10,6 +10,9 @@ from utils .X_API_EID_TOKEN import *#line:12
 from utils .User_agent import *#line:13
 import asyncio ,aiohttp ,re ,os ,sys ,threading ,concurrent .futures ,time ,json #line:14
 from utils .jdCookie import get_cookies #line:15
+
+
+
 try :#line:17
     ck =get_cookies ()#line:18
     if not ck :#line:19
@@ -25,7 +28,7 @@ class TEN_JD_PDD :#line:25
         O00000O00OO00O0O0 .inviter =os .environ .get ("TEN_inviter")if os .environ .get ("TEN_inviter")else False #line:31
         O00000O00OO00O0O0 .scode =os .environ .get ("TEN_scode")if os .environ .get ("TEN_scode")else 'all'#line:32
         O00000O00OO00O0O0 .proxy =os .environ .get ("TEN_proxy")if os .environ .get ("TEN_proxy")else False #line:33
-        O00000O00OO00O0O0 .semaphore =asyncio .Semaphore (os .environ .get ("TEN_threadsNum")if os .environ .get ("TEN_threadsNum")else 30 )#line:34
+        O00000O00OO00O0O0 .semaphore =asyncio .Semaphore (int(os .environ .get ("TEN_threadsNum")if os .environ .get ("TEN_threadsNum")else 30 ))#line:34
         O00000O00OO00O0O0 .power_success =[]#line:35
         O00000O00OO00O0O0 .power_failure =[]#line:36
         O00000O00OO00O0O0 .not_log =[]#line:37
