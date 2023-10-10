@@ -32,7 +32,7 @@ class TEN_JD_PDD_DRAW (object ):#line:33
         OOOOOO0OOOO0OO0OO .start =time .time ()#line:36
         OOOOOO0OOOO0OO0OO .token =os .environ .get ("TEN_TOKEN")if os .environ .get ("TEN_TOKEN")else False #line:37
         OOOOOO0OOOO0OO0OO .scode =os .environ .get ("TEN_scode")if os .environ .get ("TEN_scode")else 'all'#line:38
-        OOOOOO0OOOO0OO0OO .proxy =os .environ .get ("TEN_proxy")if os .environ .get ("TEN_proxy")else 'http://159.75.169.107:26986/'#line:39
+        OOOOOO0OOOO0OO0OO .proxy =os .environ .get ("TEN_proxy")if os .environ .get ("TEN_proxy")else False
         OOOOOO0OOOO0OO0OO .numer_og =os .environ .get ("draw_numer")if os .environ .get ("draw_numer")else 3 #line:40
         OOOOOO0OOOO0OO0OO .activityUrl ="https://pro.m.jd.com"#line:41
         OOOOOO0OOOO0OO0OO .cookie =os .environ .get ("draw_cookie")if os .environ .get ("draw_cookie")else ck [0 ]#line:42
