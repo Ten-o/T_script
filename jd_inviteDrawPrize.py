@@ -124,7 +124,7 @@ def H5API(functionId, body, cookie, appId):
         "User-Agent": ua
     }
 
-    urla = 'https://ten.ouklc.com/h5st'
+    urla = 'https://api.ouklc.com/api/h5st'
     params = {
         'functionId': functionId,
         'body': json.dumps(body),
