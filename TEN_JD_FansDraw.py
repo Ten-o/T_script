@@ -110,7 +110,8 @@ class TEN_JD_FansDraw :#line:22
                     break #line:136
     async def start (O00O0O0000OOOOO0O ,):#line:138
         O0O00OO0O0O0000O0 =[]#line:139
-        if not O00O0O0000OOOOO0O .proxy :#line:141
+        if O00O0O0000OOOOO0O .proxy :#line:141
+            self.log.info(f'[并发执行 线程:{self.semaphore._value}]')
             async def OOO0OOO00OO00OO0O (O0OO0O000O0OOOO00 ,OO00OO0OO0OOO000O ):#line:142
                 async with O00O0O0000OOOOO0O .semaphore :#line:143
                     OO00O00OOO000O0OO =asyncio .create_task (O00O0O0000OOOOO0O .MainInfo (O0OO0O000O0OOOO00 ,OO00OO0OO0OOO000O ))#line:144
@@ -120,6 +121,7 @@ class TEN_JD_FansDraw :#line:22
                 O0O00OO0O0O0000O0 .append (O0O00OO0OO00O0OO0 )#line:149
             await asyncio .gather (*O0O00OO0O0O0000O0 )#line:151
         else :#line:152
+            self .log .info(f'[非并发执行]')
             for O00O0OOO00OOO000O ,OOO00O0OO0OO000OO in enumerate (ck ,1 ):#line:153
                 await O00O0O0000OOOOO0O .MainInfo (O00O0OOO00OOO000O ,OOO00O0OO0OO000OO )#line:154
 if __name__ =='__main__':#line:158
