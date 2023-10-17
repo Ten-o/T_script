@@ -30,7 +30,7 @@ except:
 NUMBER_OF = os.environ.get("draw_numer") if os.environ.get("draw_numer") else 100
 cookie = os.environ.get("draw_cookie") if os.environ.get("draw_cookie") else ck[0]
 TEN_TOKEN = os.environ.get("TEN_TOKEN") if os.environ.get("TEN_TOKEN") else False
-TEN_scode = os.environ.get("TEN_scode") if os.environ.get("TEN_scode") else 0
+TEN_scode = os.environ.get("TEN_scode") if os.environ.get("TEN_scode") else 1
 
 activityUrl = "https://pro.m.jd.com"
 data_dict = {}
@@ -41,7 +41,7 @@ ua = generate_random_user_agent()
 
 stats = requests.get('https://api.ixu.cc/status/inviter.json')
 if stats.status_code != False:
-    linkId = stats.json()['linkId'][int(TEN_scode - 1)]
+    linkId = stats.json()['linkId'][int(TEN_scode) - 1]
     print(linkId)
 
 def base64Encode(string):
