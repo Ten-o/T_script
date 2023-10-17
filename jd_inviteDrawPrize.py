@@ -6,13 +6,14 @@ new Env('邀好友赢现金-抽奖');
 """
 
 
-import  requests, sys, re, json, os,uuid, random
+import time, requests, sys, re, json, os,uuid, random
+
 from urllib.parse import  unquote, unquote_plus
 from utils.UTIL import *
 from utils.User_agent import *
 from utils.X_API_EID_TOKEN import *
 from utils.jdCookie import get_cookies
-import time, datetime
+import datetime
 
 
 
@@ -28,7 +29,7 @@ except:
 
 NUMBER_OF = os.environ.get("draw_numer") if os.environ.get("draw_numer") else 100
 cookie = os.environ.get("draw_cookie") if os.environ.get("draw_cookie") else ck[0]
-TEN_TOKEN = os.environ.get("TEN_TOKEN") if os.environ.get("TEN_TOKEN") else sys.exit('❌未获取到TEN_TOKEN变量 程序自动退出')
+TEN_TOKEN = os.environ.get("TEN_TOKEN") if os.environ.get("TEN_TOKEN") else False
 TEN_scode = os.environ.get("TEN_scode") if os.environ.get("TEN_scode") else 0
 
 activityUrl = "https://pro.m.jd.com"
@@ -40,7 +41,7 @@ ua = generate_random_user_agent()
 
 stats = requests.get('https://api.ixu.cc/status/inviter.json')
 if stats.status_code != False:
-    linkId = stats.json()[f'linkId'][TEN_scode]
+    linkId = stats.json()['linkId'][int(TEN_scode - 1)]
     print(linkId)
 
 def base64Encode(string):
