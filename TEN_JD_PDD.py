@@ -5,248 +5,267 @@ Author: 𝓣𝓮𝓷 𝓸'𝓬𝓵𝓸𝓬𝓴
 cron: 1 1 1 1 1 1
 new Env('邀好友赢现金-助理');
 """
-from utils .logger import setup_logger #line:11
-from utils .X_API_EID_TOKEN import *#line:12
-from utils .User_agent import *#line:13
-import asyncio ,aiohttp ,re ,os ,sys ,threading ,concurrent .futures ,time ,json #line:14
-from utils .jdCookie import get_cookies #line:15
-
-
-
-try :#line:17
-    ck =get_cookies ()#line:18
-    if not ck :#line:19
-        sys .exit ()#line:20
-except :#line:21
-    print ("未获取到有效COOKIE,退出程序！")#line:22
-    sys .exit ()#line:23
-class TEN_JD_PDD :#line:25
-    def __init__ (O00000O00OO00O0O0 ):#line:26
-        O00000O00OO00O0O0 .log =setup_logger ()#line:27
-        O00000O00OO00O0O0 .start =time .time ()#line:28
-        O00000O00OO00O0O0 .token =os .environ .get ("TEN_TOKEN")if os .environ .get ("TEN_TOKEN")else False #line:30
-        O00000O00OO00O0O0 .inviter =os .environ .get ("TEN_inviter")if os .environ .get ("TEN_inviter")else False #line:31
-        O00000O00OO00O0O0 .scode =os .environ .get ("TEN_scode")if os .environ .get ("TEN_scode")else 'all'#line:32
-        O00000O00OO00O0O0 .proxy =os .environ .get ("TEN_proxy")if os .environ .get ("TEN_proxy")else False #line:33
-        O00000O00OO00O0O0 .semaphore =asyncio .Semaphore (int(os .environ .get ("TEN_threadsNum")if os .environ .get ("TEN_threadsNum")else 30 ))#line:34
-        O00000O00OO00O0O0 .power_success =[]#line:35
-        O00000O00OO00O0O0 .power_failure =[]#line:36
-        O00000O00OO00O0O0 .not_log =[]#line:37
-        O00000O00OO00O0O0 .exit_event =threading .Event ()#line:38
-        O00000O00OO00O0O0 .coookie =ck [0 ]#line:39
-        O00000O00OO00O0O0 .helpResult ={(1 ,'✅助力成功'),(2 ,'❌活动火爆'),(3 ,'❌没有助力次数'),(4 ,'❌助力次数用尽'),(6 ,'❌已助力')}#line:46
-        O00000O00OO00O0O0 .verify_result =False #line:47
-        O00000O00OO00O0O0 .linkId =[]#line:48
-        O00000O00OO00O0O0 .inviter_help =''#line:49
-        O00000O00OO00O0O0 .version ='1.3.6'#line:50
-    def pt_pin (O000000OO0000000O ,O0000OO0OOOOO00OO ):#line:52
-        try :#line:53
-            OOO00OOO0O000000O =re .compile (r'pt_pin=(.*?);').findall (O0000OO0OOOOO00OO )[0 ]#line:54
-            OOO00OOO0O000000O =unquote_plus (OOO00OOO0O000000O )#line:55
-        except IndexError :#line:56
-            OOO00OOO0O000000O =re .compile (r'pin=(.*?);').findall (O0000OO0OOOOO00OO )[0 ]#line:57
-            OOO00OOO0O000000O =unquote_plus (OOO00OOO0O000000O )#line:58
-        return OOO00OOO0O000000O #line:59
-    def convert_ms_to_hours_minutes (OO00OO0OO0O0OOO0O ,OOO0O0O00OO0OO00O ):#line:60
-        O00000OOOO0OOOO0O =OOO0O0O00OO0OO00O //1000 #line:61
-        O00O0OOO0OOO00OO0 ,O00000OOOO0OOOO0O =divmod (O00000OOOO0OOOO0O ,60 )#line:62
-        O00O000OO0OOO00O0 ,O00O0OOO0OOO00OO0 =divmod (O00O0OOO0OOO00OO0 ,60 )#line:63
-        return f'{O00O000OO0OOO00O0}:{O00O0OOO0OOO00OO0}'#line:64
-    def list_of_groups (O0O000O00000O000O ,OO0O0OO0O0OO0OOO0 ,OO0O000OOO0OOOOO0 ):#line:66
-        O00OOO000OO0OO000 =zip (*(iter (OO0O0OO0O0OO0OOO0 ),)*OO0O000OOO0OOOOO0 )#line:67
-        O000000000OOOOOO0 =[list (O0O0O00000O000OOO )for O0O0O00000O000OOO in O00OOO000OO0OO000 ]#line:68
-        O0O0O00O0OO0O000O =len (OO0O0OO0O0OO0OOO0 )%OO0O000OOO0OOOOO0 #line:69
-        O000000000OOOOOO0 .append (OO0O0OO0O0OO0OOO0 [-O0O0O00O0OO0O000O :])if O0O0O00O0OO0O000O !=0 else O000000000OOOOOO0 #line:70
-        return O000000000OOOOOO0 #line:71
-    async def retry_with_backoff (OO0O00000OO0O00O0 ,OOOOOOO0OOOO000OO ,O0O0O0O0OO00000OO ,O00000O0OO000O00O ,backoff_seconds =2 ):#line:73
-        for OO00O0OO00O00OO00 in range (O0O0O0O0OO00000OO ):#line:75
-            try :#line:76
-                return await OOOOOOO0OOOO000OO ()#line:77
-            except asyncio .TimeoutError :#line:78
-                OO0O00000OO0O00O0 .log .debug (f'第{OO00O0OO00O00OO00 + 1}次重试  {O00000O0OO000O00O} 请求超时')#line:79
-                await asyncio .sleep (backoff_seconds )#line:80
-            except Exception as O0OOO00OO000OO0O0 :#line:81
-                OO0O00000OO0O00O0 .log .debug (f'第{OO00O0OO00O00OO00 + 1}次重试 {O00000O0OO000O00O}出错：{O0OOO00OO000OO0O0}')#line:82
-                await asyncio .sleep (backoff_seconds )#line:83
-                if OO00O0OO00O00OO00 ==O0O0O0O0OO00000OO :#line:84
-                    OO0O00000OO0O00O0 .log .error (f'{O00000O0OO000O00O}重试{O0O0O0O0OO00000OO}次后仍然发生异常')#line:85
-                    return #line:86
-    async def verify (OOOOOOO0OO00OO00O ):#line:88
-        async def OOO0O0O0O00OO000O ():#line:89
-            OO0OOO000O00O000O ='https://api.ixu.cc/verify'#line:90
-            async with aiohttp .ClientSession ()as OO00OO0OO0O00OOOO :#line:91
-                async with OO00OO0OO0O00OOOO .get (OO0OOO000O00O000O ,data ={'TOKEN':OOOOOOO0OO00OO00O .token },timeout =3 )as OOOOO000OOOO0000O :#line:92
-                    OOOO00O00OOO0O0O0 =await OOOOO000OOOO0000O .json ()#line:93
-                    if OOOOO000OOOO0000O .status ==200 :#line:94
-                        OOOOOOO0OO00OO00O .verify_result =True #line:95
-                        OOOOOOO0OO00OO00O .log .info (f'认证通过 UserId：{OOOO00O00OOO0O0O0["user_id"]}')#line:96
-                        return OOOO00O00OOO0O0O0 #line:97
-                    else :#line:98
-                        OOOOOOO0OO00OO00O .log .error (f"授权未通过:{OOOO00O00OOO0O0O0['error']}")#line:99
-                        sys .exit ()#line:100
-        return await OOOOOOO0OO00OO00O .retry_with_backoff (OOO0O0O0O00OO000O ,3 ,'verify')#line:102
-    def parse_version (OOO0OO00O000O0000 ,O0OOOO00O0O0O00OO ):#line:104
-        return list (map (int ,O0OOOO00O0O0O00OO .split ('.')))#line:105
-    def is_major_update (O0OO00O00OO000000 ,O0O000OOOOOO0O000 ,O0000OO0OOOOOO00O ):#line:107
-        if O0O000OOOOOO0O000 [1 ]!=O0000OO0OOOOOO00O [1 ]:#line:108
-            return True #line:109
-        elif O0O000OOOOOO0O000 [0 ]!=O0000OO0OOOOOO00O [0 ]:#line:110
-            return True #line:111
-        else :#line:112
-            return False #line:113
-    def is_force_update (OOO0O00O0000OO00O ,OOOO0O000O0OOO000 ,O0OO00OOO00OO00OO ):#line:115
-        if OOO0O00O0000OO00O .is_major_update (OOOO0O000O0OOO000 ,O0OO00OOO00OO00OO ):#line:116
-            return True #line:117
-        elif O0OO00OOO00OO00OO [2 ]-OOOO0O000O0OOO000 [2 ]>=3 :#line:118
-            return True #line:119
-        elif O0OO00OOO00OO00OO [2 ]<OOOO0O000O0OOO000 [2 ]:#line:120
-            return True #line:121
-        else :#line:122
-            return False #line:123
-    async def LinkId (O0OO0OOO00O0000O0 ):#line:125
-        async def O0OO00OO0OO0O0OO0 ():#line:126
-            if O0OO0OOO00O0000O0 .verify_result !=True :#line:127
-                await O0OO0OOO00O0000O0 .verify ()#line:128
-            if O0OO0OOO00O0000O0 .verify_result !=True :#line:129
-                O0OO0OOO00O0000O0 .log .error ("授权未通过 退出")#line:130
-                sys .exit ()#line:131
-            OOO0OO0O0O0OO0OOO ='https://api.ixu.cc/status/inviter.json'#line:132
-            async with aiohttp .ClientSession ()as O000O0O0OO000O000 :#line:133
-                async with O000O0O0OO000O000 .get (OOO0OO0O0O0OO0OOO ,params ={'TOKEN':O0OO0OOO00O0000O0 .token },timeout =3 )as O0OOO0O00000000O0 :#line:134
-                    if O0OOO0O00000000O0 .status ==200 :#line:135
-                        OO00O00O0OO000000 =await O0OOO0O00000000O0 .json ()#line:136
-                        if OO00O00O0OO000000 ['stats']!='True':#line:137
-                            O0OO0OOO00O0000O0 .log .error (f"{OO00O00O0OO000000['err_text']}")#line:138
-                            sys .exit ()#line:139
-                        O0OO0OOO00O0000O0 .inviter_help =OO00O00O0OO000000 ['inviter']#line:140
-                        if O0OO0OOO00O0000O0 .is_force_update (O0OO0OOO00O0000O0 .parse_version (O0OO0OOO00O0000O0 .version ),O0OO0OOO00O0000O0 .parse_version (OO00O00O0OO000000 ["version"])):#line:141
-                            O0OO0OOO00O0000O0 .log .error (f'强制更新 云端版本:{OO00O00O0OO000000["version"]},当前版本:{O0OO0OOO00O0000O0.version} {OO00O00O0OO000000["upload_text"]}')#line:142
-                            sys .exit ()#line:143
-                        else :#line:144
-                            O0OO0OOO00O0000O0 .log .debug (f'云端版本:{OO00O00O0OO000000["version"]},当前版本:{O0OO0OOO00O0000O0.version}')#line:145
-                        if len (OO00O00O0OO000000 ['text'])>0 :#line:146
-                            O0OO0OOO00O0000O0 .log .debug (f'那女孩对你说:{OO00O00O0OO000000["text"]}')#line:147
-                        if O0OO0OOO00O0000O0 .scode =='ALL'or O0OO0OOO00O0000O0 .scode =='all':#line:148
-                            for O0O0000OO000O0O00 in OO00O00O0OO000000 ['linkId']:#line:149
-                                O0OO0OOO00O0000O0 .linkId .append (O0O0000OO000O0O00 )#line:150
-                                O0OO0OOO00O0000O0 .log .info (f'云端获取到linkId:{O0O0000OO000O0O00}')#line:151
-                            return True #line:152
-                        else :#line:153
-                            O0OO0OOO00O0000O0 .linkId .append (OO00O00O0OO000000 ['linkId'][int (O0OO0OOO00O0000O0 .scode )-1 ])#line:154
-                            O0OO0OOO00O0000O0 .log .info (f'云端获取到linkId:{OO00O00O0OO000000["linkId"][int(O0OO0OOO00O0000O0.scode) - 1]}')#line:155
-                            return True #line:156
-                    else :#line:157
-                        O0OO0OOO00O0000O0 .log .error ('未获取到linkId 重试')#line:158
-        return await O0OO0OOO00O0000O0 .retry_with_backoff (O0OO00OO0OO0O0OO0 ,3 ,'linkId')#line:159
-    async def Get_H5st (OOO0OOO0000000OO0 ,O0OOOO0OOOOO0O0O0 ,OOOOOOOO000000OOO ,OO0OO000O000OO00O ,O0O00O0O00OO0O00O ,OOO0OO0O0OO000OO0 ):#line:164
-        async def OO00O0O000OOO000O ():#line:165
-            if OOO0OOO0000000OO0 .verify_result !=True :#line:166
-                OOO0OOO0000000OO0 .log .error ("授权未通过 退出")#line:167
-                sys .exit ()#line:168
-            O00O0O000OOO0O0O0 ='https://api.ouklc.com/api/h5st'#line:169
-            O000O00OO00OO00O0 =OOO0OOO0000000OO0 .pt_pin (OOO0OO0O0OO000OO0 )#line:170
-            OO0O0O0OO0O0O0OOO ={'functionId':O0OOOO0OOOOO0O0O0 ,'body':json .dumps (OOOOOOOO000000OOO ),'ua':OO0OO000O000OO00O ,'pin':O000O00OO00OO00O0 ,'appId':O0O00O0O00OO0O00O }#line:177
-            async with aiohttp .ClientSession ()as OO0000OOO0O0OOOOO :#line:178
-                async with OO0000OOO0O0OOOOO .get (O00O0O000OOO0O0O0 ,params =OO0O0O0OO0O0O0OOO ,timeout =10 )as O000O0OOO0O00O0O0 :#line:179
-                    if O000O0OOO0O00O0O0 .status ==200 :#line:180
-                        OOO00OOO0O0O0OOOO =await O000O0OOO0O00O0O0 .json ()#line:181
-                        return OOO00OOO0O0O0OOOO ['body']#line:183
-                    else :#line:184
-                        return await OOO0OOO0000000OO0 .retry_with_backoff (OO00O0O000OOO000O ,3 ,'H5st')#line:185
-        return await OOO0OOO0000000OO0 .retry_with_backoff (OO00O0O000OOO000O ,3 ,'H5st')#line:187
-    async def Get_H5_Api (OOOOOO0OO0O0OO000 ,OO000O00O00O0O0O0 ,O0O0O00OOOOOOO000 ,O000O0OO0OO0OOO0O ,O0OO00OOO00O00O00 ):#line:191
-            async def OO0O0O000O0OO00O0 (OO0OOOO00OO00OO00 ):#line:192
-                if OOOOOO0OO0O0OO000 .verify_result !=True :#line:193
-                    OOOOOO0OO0O0OO000 .log .error ("授权未通过 退出")#line:194
-                    sys .exit ()#line:195
-                OOOOO0O00000OO0O0 =generate_random_user_agent ()#line:196
-                OO00O0000OOO00OO0 ={"Accept":"*/*","Accept-Encoding":"gzip, deflate, br","Accept-Language":"zh-cn","Connection":"keep-alive","Content-Type":"application/x-www-form-urlencoded","Host":"api.m.jd.com","Referer":"https://prodev.m.jd.com/mall/active/2iKbfCXwhMX2SVuGDFEcKcDjbtUC/index.html","Origin":"https://prodev.m.jd.com","Cookie":O000O0OO0OO0OOO0O ,"User-Agent":OOOOO0O00000OO0O0 }#line:208
-                OOO00OO0OOOOOO0OO =getUUID ("xxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxx")#line:209
-                OO0OOOO00OO00OO00 =await OOOOOO0OO0O0OO000 .Get_H5st (OO000O00O00O0O0O0 ,OO0OOOO00OO00OO00 ,OOOOO0O00000OO0O0 ,O0OO00OOO00O00O00 ,O000O0OO0OO0OOO0O )#line:210
-                O0O00OOOOO0OOOOO0 ="https://api.m.jd.com"#line:212
-                async with aiohttp .ClientSession ()as OO00OOOOO0O0OO0O0 :#line:213
-                    if OOOOOO0OO0O0OO000 .proxy ==False :#line:214
-                        async with OO00OOOOO0O0OO0O0 .post (O0O00OOOOO0OOOOO0 ,headers =OO00O0000OOO00OO0 ,data =OO0OOOO00OO00OO00 ,timeout =5 )as OO0000O0OO00OOO0O :#line:215
-                            if OO0000O0OO00OOO0O .status ==200 :#line:216
-                                return await OO0000O0OO00OOO0O .json ()#line:217
-                            else :#line:219
-                                OOOOOO0OO0O0OO000 .log .error (f'重试 请求结果：{OO0000O0OO00OOO0O.status}')#line:220
-                    else :#line:221
-                        async with OO00OOOOO0O0OO0O0 .post (O0O00OOOOO0OOOOO0 ,headers =OO00O0000OOO00OO0 ,data =OO0OOOO00OO00OO00 ,timeout =5 ,proxy =OOOOOO0OO0O0OO000 .proxy )as OO0000O0OO00OOO0O :#line:222
-                            if OO0000O0OO00OOO0O .status ==200 :#line:223
-                                return await OO0000O0OO00OOO0O .json ()#line:224
-                            else :#line:225
-                                OOOOOO0OO0O0OO000 .log .error (f'重试 请求结果：{OO0000O0OO00OOO0O.status}')#line:226
-                                await OOOOOO0OO0O0OO000 .Get_H5_Api (OO000O00O00O0O0O0 ,OO0OOOO00OO00OO00 ,O000O0OO0OO0OOO0O ,O0OO00OOO00O00O00 )#line:227
-            return await OOOOOO0OO0O0OO000 .retry_with_backoff (lambda :OO0O0O000O0OO00O0 (O0O0O00OOOOOOO000 ),3 ,'H5st_Api')#line:229
-    async def Result (OOOOO0OOO00O0OO00 ,OO000O0O0OO000OOO ,OO0000O000OO00OO0 ,OOOOOO0O0OO0OO0O0 ):#line:231
-        async def OO0O000OOO0O00OO0 ():#line:232
-            OOOO0O000OOO0O0O0 =False #line:233
-            if OOOOO0OOO00O0OO00 .verify_result !=True :#line:234
-                OOOOO0OOO00O0OO00 .log .error ("授权未通过 退出")#line:235
-                sys .exit ()#line:236
-            for OOOO0O00O000O000O in OOOOO0OOO00O0OO00 .linkId :#line:237
-                O0O0O000O00OO0000 =await OOOOO0OOO00O0OO00 .Get_H5_Api ("inviteFissionBeforeHome",{'linkId':OOOO0O00O000O000O ,"isJdApp":True ,'inviter':OO0000O000OO00OO0 },OOOOOO0O0OO0OO0O0 ,'02f8d')#line:238
-                if int (O0O0O000O00OO0000 ['code'])==0 :#line:239
-                    for O0000OOOOOOOOO00O ,O00OO0OOOO0OO0O00 in OOOOO0OOO00O0OO00 .helpResult :#line:240
-                        if O0O0O000O00OO0000 ['data']['helpResult']==int (O0000OOOOOOOOO00O ):#line:241
-                            OOOO0O000OOO0O0O0 =True #line:242
-                            OOOOO0OOO00O0OO00 .log .info (f"第{OO000O0O0OO000OOO}次 Id:{OOOO0O00O000O000O} 助理:{O0O0O000O00OO0000['data']['nickName']}|{O0O0O000O00OO0000['data']['helpResult']}|{OOOOO0OOO00O0OO00.pt_pin(OOOOOO0O0OO0OO0O0)}|{O00OO0OOOO0OO0O00}")#line:243
-                            if O0O0O000O00OO0000 ['data']['helpResult']==1 :#line:244
-                                OOOOO0OOO00O0OO00 .power_success .append (OOOOOO0O0OO0OO0O0 )#line:245
-                            else :#line:246
-                                OOOOO0OOO00O0OO00 .power_failure .append (OOOOOO0O0OO0OO0O0 )#line:247
-                    if not OOOO0O000OOO0O0O0 :#line:248
-                        O00OO0OOOO0OO0O00 ='❌未知状态 (可能是活动未开启！！！)'#line:249
-                        OOOOO0OOO00O0OO00 .power_failure .append (OOOOOO0O0OO0OO0O0 )#line:250
-                        OOOOO0OOO00O0OO00 .log .info (f"第{OO000O0O0OO000OOO}次 Id:{OOOO0O00O000O000O} 助理:{O0O0O000O00OO0000['data']['nickName']}|{O0O0O000O00OO0000['data']['helpResult']}|{OOOOO0OOO00O0OO00.pt_pin(OOOOOO0O0OO0OO0O0)}|{O00OO0OOOO0OO0O00}")#line:251
-                else :#line:252
-                    OOOOO0OOO00O0OO00 .log .info (f"{OOOOO0OOO00O0OO00.pt_pin(OOOOOO0O0OO0OO0O0)}{O0O0O000O00OO0000['code']} 结果:💔{O0O0O000O00OO0000['errMsg']}")#line:253
-                    OOOOO0OOO00O0OO00 .not_log .append (OOOOOO0O0OO0OO0O0 )#line:254
-        return await OOOOO0OOO00O0OO00 .retry_with_backoff (OO0O000OOO0O00OO0 ,3 ,'Result')#line:255
-    async def main (O000O0OOOO0OOO000 ):#line:258
-        await O000O0OOOO0OOO000 .verify ()#line:259
-        await O000O0OOOO0OOO000 .LinkId ()#line:260
-        if O000O0OOOO0OOO000 .verify_result !=True :#line:261
-            await O000O0OOOO0OOO000 .verify ()#line:262
-        if O000O0OOOO0OOO000 .verify_result !=True :#line:263
-            O000O0OOOO0OOO000 .log .error ("授权未通过 退出")#line:264
-            sys .exit ()#line:265
-        for O000OO0OOO0000OO0 in O000O0OOOO0OOO000 .linkId :#line:266
-            OOOOOO00O000O00O0 =await O000O0OOOO0OOO000 .Get_H5_Api ("inviteFissionBeforeHome",{'linkId':O000OO0OOO0000OO0 ,"isJdApp":True ,'inviter':O000O0OOOO0OOO000 .inviter_help },O000O0OOOO0OOO000 .coookie ,'02f8d')#line:269
-        if OOOOOO00O000O00O0 ['success']==False and OOOOOO00O000O00O0 ['code']==1000 :#line:270
-            O000O0OOOO0OOO000 .log .info (f"{OOOOOO00O000O00O0['errMsg']}")#line:271
-            sys .exit ()#line:272
-        if OOOOOO00O000O00O0 ['data']['helpResult']==1 :#line:273
-            O000O0OOOO0OOO000 .log .info (f'{O000O0OOOO0OOO000.pt_pin(O000O0OOOO0OOO000.coookie)}✅助力作者成功 谢谢你 你是个好人！！！')#line:274
-        else :#line:275
-            O000O0OOOO0OOO000 .log .info (f'{O000O0OOOO0OOO000.pt_pin(O000O0OOOO0OOO000.coookie)}❌助理作者失败 下次记得把助理留给我 呜呜呜！！！')#line:276
-        if O000O0OOOO0OOO000 .inviter ==False :#line:278
-            for O000OO0OOO0000OO0 in O000O0OOOO0OOO000 .linkId :#line:279
-                OOOOOO00O000O00O0 =await O000O0OOOO0OOO000 .Get_H5_Api ('inviteFissionHome',{'linkId':O000OO0OOO0000OO0 ,"inviter":"",},O000O0OOOO0OOO000 .coookie ,'af89e')#line:280
-                O000O0OOOO0OOO000 .log .info (f'{O000O0OOOO0OOO000.pt_pin(O000O0OOOO0OOO000.coookie)}⏰剩余时间:{O000O0OOOO0OOO000.convert_ms_to_hours_minutes(OOOOOO00O000O00O0["data"]["countDownTime"])} 🎉已获取助力:{OOOOOO00O000O00O0["data"]["prizeNum"] + OOOOOO00O000O00O0["data"]["drawPrizeNum"]}次 ✅【LinkId】:{O000OO0OOO0000OO0}')#line:281
-            O000O0OOOO0OOO000 .inviter =OOOOOO00O000O00O0 ["data"]["inviter"]#line:282
-        if O000O0OOOO0OOO000 .proxy !=False :#line:283
-            O000O0OOOO0OOO000 .log .info (f"##############开始并发[线程数:{O000O0OOOO0OOO000.semaphore._value}]##############")#line:284
-            O00OO0OOO00000OO0 =[]#line:285
-            async def O00O000O0O00OO000 (O00OO0O0OOO000000 ,O0O00O0OOOOOOOO0O ):#line:293
-                async with O000O0OOOO0OOO000 .semaphore :#line:294
-                    O0000O00O00000O00 =asyncio .create_task (O000O0OOOO0OOO000 .Result (O00OO0O0OOO000000 ,O000O0OOOO0OOO000 .inviter ,O0O00O0OOOOOOOO0O ))#line:295
-                    return await O0000O00O00000O00 #line:296
-            for OO000000OOOO0OO0O ,O00O0OOO00OOO0000 in enumerate (ck ,1 ):#line:299
-                O0OO0OO0OOO0OOOOO =asyncio .create_task (O00O000O0O00OO000 (OO000000OOOO0OO0O ,O00O0OOO00OOO0000 ))#line:300
-                O00OO0OOO00000OO0 .append (O0OO0OO0OOO0OOOOO )#line:301
-            O00O0OO00O00OOOO0 =await asyncio .gather (*O00OO0OOO00000OO0 )#line:303
-        else :#line:304
-            O000O0OOOO0OOO000 .log .info (f"##############开始任务##############")#line:305
-            for OO000000OOOO0OO0O ,O00O0OOO00OOO0000 in enumerate (ck ,1 ):#line:306
-                await O000O0OOOO0OOO000 .Result (OO000000OOOO0OO0O ,O000O0OOOO0OOO000 .inviter ,O00O0OOO00OOO0000 )#line:307
-                await asyncio .sleep (0.5 )#line:308
-        O000O0OOOO0OOO000 .log .info (f"##############清点人数##############")#line:310
-        O000O0OOOO0OOO000 .log .info (f"✅助力成功:{len(O000O0OOOO0OOO000.power_success)}人 ❌助力失败:{len(O000O0OOOO0OOO000.power_failure)}人 💔未登录CK{len(O000O0OOOO0OOO000.not_log)}人")#line:311
-        O000O0OOOO0OOO000 .log .info (f" ⏰耗时:{time.time() - O000O0OOOO0OOO000.start}")#line:312
-if __name__ =='__main__':#line:314
-    pdd =TEN_JD_PDD ()#line:315
-    loop =asyncio .get_event_loop ()#line:316
-    loop .run_until_complete (pdd .main ())#line:317
-    loop .close ()#line:318
+#!/usr/bin/env python3
+""#line:9
+from utils .logger import setup_logger #line:12
+from utils .X_API_EID_TOKEN import *#line:13
+from utils .User_agent import *#line:14
+import asyncio ,aiohttp ,re ,os ,sys ,threading ,concurrent .futures ,time ,json #line:15
+from utils .jdCookie import get_cookies #line:16
+try :#line:18
+    ck =get_cookies ()#line:19
+    if not ck :#line:20
+        sys .exit ()#line:21
+except :#line:22
+    print ("未获取到有效COOKIE,退出程序！")#line:23
+    sys .exit ()#line:24
+class TEN_JD_PDD :#line:27
+    def __init__ (OO0O00000O0O00OO0 ):#line:28
+        OO0O00000O0O00OO0 .log =setup_logger ()#line:29
+        OO0O00000O0O00OO0 .start =time .time ()#line:30
+        OO0O00000O0O00OO0 .token =os .environ .get ("TEN_TOKEN")if os .environ .get ("TEN_TOKEN")else False #line:32
+        OO0O00000O0O00OO0 .inviter =os .environ .get ("TEN_inviter")if os .environ .get ("TEN_inviter")else False #line:33
+        OO0O00000O0O00OO0 .scode =os .environ .get ("TEN_scode")if os .environ .get ("TEN_scode")else 'all'#line:34
+        OO0O00000O0O00OO0 .proxy =os .environ .get ("TEN_proxy")if os .environ .get ("TEN_proxy")else False #line:35
+        OO0O00000O0O00OO0 .semaphore =asyncio .Semaphore (int (os .environ .get ("TEN_threadsNum")if os .environ .get ("TEN_threadsNum")else 50 ))#line:36
+        OO0O00000O0O00OO0 .power_success =[]#line:37
+        OO0O00000O0O00OO0 .power_failure =[]#line:38
+        OO0O00000O0O00OO0 .not_log =[]#line:39
+        OO0O00000O0O00OO0 .exit_event =threading .Event ()#line:40
+        OO0O00000O0O00OO0 .coookie =ck [0 ]#line:41
+        OO0O00000O0O00OO0 .helpResult ={(1 ,'✅助力成功'),(2 ,'❌活动火爆'),(3 ,'❌没有助力次数'),(4 ,'❌助力次数用尽'),(6 ,'❌已助力')}#line:48
+        OO0O00000O0O00OO0 .verify_result =False #line:49
+        OO0O00000O0O00OO0 .linkId =[]#line:50
+        OO0O00000O0O00OO0 .inviter_help =''#line:51
+        OO0O00000O0O00OO0 .version ='1.3.6'#line:52
+        OO0O00000O0O00OO0 .exit_condition =9999 #line:53
+        OO0O00000O0O00OO0 .lock =threading .Lock ()#line:54
+    def pt_pin (OO00000O000OO0OOO ,O0O0000OOO00000OO ):#line:56
+        try :#line:57
+            O0O0OO0OOOO0OO000 =re .compile (r'pt_pin=(.*?);').findall (O0O0000OOO00000OO )[0 ]#line:58
+            O0O0OO0OOOO0OO000 =unquote_plus (O0O0OO0OOOO0OO000 )#line:59
+        except IndexError :#line:60
+            O0O0OO0OOOO0OO000 =re .compile (r'pin=(.*?);').findall (O0O0000OOO00000OO )[0 ]#line:61
+            O0O0OO0OOOO0OO000 =unquote_plus (O0O0OO0OOOO0OO000 )#line:62
+        return O0O0OO0OOOO0OO000 #line:63
+    def convert_ms_to_hours_minutes (OOOO0O0O0OO00O00O ,O0O00OO00O0OO00O0 ):#line:77
+        OOO0OO00O0O0O000O =O0O00OO00O0OO00O0 //1000 #line:78
+        OOOOOOO00O0OOOOOO ,OOO0OO00O0O0O000O =divmod (OOO0OO00O0O0O000O ,60 )#line:79
+        OOO0OO00OO0000OO0 ,OOOOOOO00O0OOOOOO =divmod (OOOOOOO00O0OOOOOO ,60 )#line:80
+        return f'{OOO0OO00OO0000OO0}:{OOOOOOO00O0OOOOOO}'#line:81
+    def list_of_groups (O0OOO00O0O0OO0O0O ,O0000O0OOO0OO0OO0 ,O0OOOO0O00OO0O0O0 ):#line:83
+        O000OO0OO0OOO00OO =zip (*(iter (O0000O0OOO0OO0OO0 ),)*O0OOOO0O00OO0O0O0 )#line:84
+        O0OO00O00OOOOO0OO =[list (OOO0O00O0OO0OO0O0 )for OOO0O00O0OO0OO0O0 in O000OO0OO0OOO00OO ]#line:85
+        O0OO0O0OO0O00O0O0 =len (O0000O0OOO0OO0OO0 )%O0OOOO0O00OO0O0O0 #line:86
+        O0OO00O00OOOOO0OO .append (O0000O0OOO0OO0OO0 [-O0OO0O0OO0O00O0O0 :])if O0OO0O0OO0O00O0O0 !=0 else O0OO00O00OOOOO0OO #line:87
+        return O0OO00O00OOOOO0OO #line:88
+    async def retry_with_backoff (OOOOOOOO0O00O000O ,O0OOO000O000000OO ,OOO0O0O00OO0OO0O0 ,OOOO00000OO0OOO00 ,backoff_seconds =0 ):#line:90
+        for OO00OO00OOOOO0O00 in range (OOO0O0O00OO0OO0O0 ):#line:91
+            O0O0O00O00OOO00O0 =False #line:92
+            try :#line:93
+                return await O0OOO000O000000OO ()#line:94
+            except asyncio .TimeoutError :#line:95
+                if not O0O0O00O00OOO00O0 :#line:96
+                    OOOOOOOO0O00O000O .log .warning (f'第{OO00OO00OOOOO0O00 + 1}次重试 {OOOO00000OO0OOO00} 请求超时')#line:97
+                    O0O0O00O00OOO00O0 =True #line:98
+                await asyncio .sleep (backoff_seconds )#line:99
+            except Exception as OO0O0OO0O0O0OO0OO :#line:100
+                if not O0O0O00O00OOO00O0 :#line:101
+                    OOOOOOOO0O00O000O .log .warning (f'第{OO00OO00OOOOO0O00 + 1}次重试 {OOOO00000OO0OOO00} 出错：{OO0O0OO0O0O0OO0OO}')#line:102
+                    O0O0O00O00OOO00O0 =True #line:103
+                await asyncio .sleep (backoff_seconds )#line:104
+            if O0O0O00O00OOO00O0 and OO00OO00OOOOO0O00 ==OOO0O0O00OO0OO0O0 -1 :#line:106
+                OOOOOOOO0O00O000O .log .error (f'{OOOO00000OO0OOO00} 重试{OOO0O0O00OO0OO0O0}次后仍然发生异常')#line:107
+                return False ,False ,False #line:108
+    async def verify (O000OOOOOOO00OO00 ):#line:111
+        O000OOOOOOO00OO00 .verify_result =True #line:112
+        async def OO000O0OOOOOOOOO0 ():#line:113
+            OOO0OOO0OOO00000O ='https://api.ixu.cc/verify'#line:114
+            async with aiohttp .ClientSession ()as OO0O000O0000000O0 :#line:115
+                async with OO0O000O0000000O0 .get (OOO0OOO0OOO00000O ,data ={'TOKEN':O000OOOOOOO00OO00 .token },timeout =3 )as OO0O00O0O000O00O0 :#line:116
+                    OOOOO0OOOOO000O00 =await OO0O00O0O000O00O0 .json ()#line:117
+                    if OO0O00O0O000O00O0 .status ==200 :#line:118
+                        O000OOOOOOO00OO00 .verify_result =True #line:119
+                        O000OOOOOOO00OO00 .log .info (f'认证通过 UserId：{OOOOO0OOOOO000O00["user_id"]}')#line:120
+                        return OOOOO0OOOOO000O00 #line:121
+                    else :#line:122
+                        O000OOOOOOO00OO00 .log .error (f"授权未通过:{OOOOO0OOOOO000O00['error']}")#line:123
+                        sys .exit ()#line:124
+        return await O000OOOOOOO00OO00 .retry_with_backoff (OO000O0OOOOOOOOO0 ,3 ,'verify')#line:126
+    def parse_version (OO0OOOO0000O0000O ,O0O00O0O000OOO00O ):#line:128
+        return list (map (int ,O0O00O0O000OOO00O .split ('.')))#line:129
+    def is_major_update (OO0OO00OOOOOOOO00 ,OO0O0O000OO000000 ,O00OO0OO00O00O0OO ):#line:131
+        if OO0O0O000OO000000 [1 ]!=O00OO0OO00O00O0OO [1 ]:#line:132
+            return True #line:133
+        elif OO0O0O000OO000000 [0 ]!=O00OO0OO00O00O0OO [0 ]:#line:134
+            return True #line:135
+        else :#line:136
+            return False #line:137
+    def is_force_update (O000OO00O0OOO00OO ,OOO000OO00000OO0O ,O00O0OOO0OOO00000 ):#line:139
+        if O000OO00O0OOO00OO .is_major_update (OOO000OO00000OO0O ,O00O0OOO0OOO00000 ):#line:140
+            return True #line:141
+        elif O00O0OOO0OOO00000 [2 ]-OOO000OO00000OO0O [2 ]>=3 :#line:142
+            return True #line:143
+        elif O00O0OOO0OOO00000 [2 ]<OOO000OO00000OO0O [2 ]:#line:144
+            return True #line:145
+        else :#line:146
+            return False #line:147
+    async def LinkId (O0O0O00O00OOO0OO0 ):#line:149
+        async def OO0O0O0OOOO000O00 ():#line:150
+            if O0O0O00O00OOO0OO0 .verify_result !=True :#line:151
+                await O0O0O00O00OOO0OO0 .verify ()#line:152
+            if O0O0O00O00OOO0OO0 .verify_result !=True :#line:153
+                O0O0O00O00OOO0OO0 .log .error ("授权未通过 退出")#line:154
+                sys .exit ()#line:155
+            OO000O0O000OOOOO0 ='https://api.ixu.cc/status/inviter.json'#line:156
+            async with aiohttp .ClientSession ()as OO0O00OO000000OO0 :#line:157
+                async with OO0O00OO000000OO0 .get (OO000O0O000OOOOO0 ,timeout =3 )as O00O0O000OO0O0000 :#line:158
+                    if O00O0O000OO0O0000 .status ==200 :#line:159
+                        OO0OOOO00O0O000O0 =await O00O0O000OO0O0000 .json ()#line:160
+                        if OO0OOOO00O0O000O0 ['stats']!='True':#line:161
+                            O0O0O00O00OOO0OO0 .log .error (f"{OO0OOOO00O0O000O0['err_text']}")#line:162
+                            sys .exit ()#line:163
+                        O0O0O00O00OOO0OO0 .inviter_help =OO0OOOO00O0O000O0 ['inviter']#line:164
+                        if O0O0O00O00OOO0OO0 .is_force_update (O0O0O00O00OOO0OO0 .parse_version (O0O0O00O00OOO0OO0 .version ),O0O0O00O00OOO0OO0 .parse_version (OO0OOOO00O0O000O0 ["version"])):#line:165
+                            O0O0O00O00OOO0OO0 .log .error (f'强制更新 云端版本:{OO0OOOO00O0O000O0["version"]},当前版本:{O0O0O00O00OOO0OO0.version} {OO0OOOO00O0O000O0["upload_text"]}')#line:167
+                            sys .exit ()#line:168
+                        else :#line:169
+                            O0O0O00O00OOO0OO0 .log .debug (f'云端版本:{OO0OOOO00O0O000O0["version"]},当前版本:{O0O0O00O00OOO0OO0.version}')#line:170
+                        if len (OO0OOOO00O0O000O0 ['text'])>0 :#line:171
+                            O0O0O00O00OOO0OO0 .log .debug (f'那女孩对你说:{OO0OOOO00O0O000O0["text"]}')#line:172
+                        if O0O0O00O00OOO0OO0 .scode =='ALL'or O0O0O00O00OOO0OO0 .scode =='all':#line:173
+                            for OO0OOOO0O0O0O0OO0 in OO0OOOO00O0O000O0 ['linkId']:#line:174
+                                O0O0O00O00OOO0OO0 .linkId .append (OO0OOOO0O0O0O0OO0 )#line:175
+                                O0O0O00O00OOO0OO0 .log .info (f'云端获取到linkId:{OO0OOOO0O0O0O0OO0}')#line:176
+                            return True #line:177
+                        else :#line:178
+                            O0O0O00O00OOO0OO0 .linkId .append (OO0OOOO00O0O000O0 ['linkId'][int (O0O0O00O00OOO0OO0 .scode )-1 ])#line:179
+                            O0O0O00O00OOO0OO0 .log .info (f'云端获取到linkId:{OO0OOOO00O0O000O0["linkId"][int(O0O0O00O00OOO0OO0.scode) - 1]}')#line:180
+                            return True #line:181
+                    else :#line:182
+                        O0O0O00O00OOO0OO0 .log .error ('未获取到linkId 重试')#line:183
+        return await O0O0O00O00OOO0OO0 .retry_with_backoff (OO0O0O0OOOO000O00 ,3 ,'linkId')#line:185
+    async def Get_H5st (O00OOO0OOOOO0O0OO ,O00000OOOOOO000O0 ,O00O0OO0OO00O0O00 ,OO00OOO000O000OO0 ,O0OO000O00OOOOOOO ,OO00000O0000OOOOO ):#line:187
+        async def O0OOO00O00OOOO00O ():#line:188
+            if O00OOO0OOOOO0O0OO .verify_result !=True :#line:189
+                O00OOO0OOOOO0O0OO .log .error ("授权未通过 退出")#line:190
+                sys .exit ()#line:191
+            O0O0OOO0OO0OO00OO ='https://api.ouklc.com/api/h5st'#line:192
+            O00O0OO00O000OO0O =O00OOO0OOOOO0O0OO .pt_pin (OO00000O0000OOOOO )#line:193
+            OOOOOO000OO0O0O00 ={'functionId':O00000OOOOOO000O0 ,'body':json .dumps (O00O0OO0OO00O0O00 ),'ua':OO00OOO000O000OO0 ,'pin':O00O0OO00O000OO0O ,'appId':O0OO000O00OOOOOOO }#line:200
+            async with aiohttp .ClientSession ()as O000OO0O00000000O :#line:201
+                async with O000OO0O00000000O .get (O0O0OOO0OO0OO00OO ,params =OOOOOO000OO0O0O00 ,timeout =10 )as OOOO00O0OOO00O000 :#line:202
+                    if OOOO00O0OOO00O000 .status ==200 :#line:203
+                        O000O0O0OOO0OOOO0 =await OOOO00O0OOO00O000 .json ()#line:204
+                        return O000O0O0OOO0OOOO0 ['body']#line:205
+                    else :#line:206
+                        return await O00OOO0OOOOO0O0OO .retry_with_backoff (O0OOO00O00OOOO00O ,3 ,'H5st')#line:207
+        return await O00OOO0OOOOO0O0OO .retry_with_backoff (O0OOO00O00OOOO00O ,3 ,'H5st')#line:209
+    async def Get_H5_Api (O0O00O0000000000O ,O00O000000O0OOO0O ,OO0O00O0O00O00O0O ,O0000OO000OO00OO0 ,O0OOO00O0O0O0OO0O ):#line:211
+        async def OO0OOO0O00OO00000 (O0000O0O0O00OOOOO ):#line:212
+            if O0O00O0000000000O .verify_result !=True :#line:213
+                O0O00O0000000000O .log .error ("授权未通过 退出")#line:214
+                sys .exit ()#line:215
+            OOO0O0O00O00OOO00 =generate_random_user_agent ()#line:216
+            O0OOOOOO0OO0OOOO0 ={"Accept":"*/*","Accept-Encoding":"gzip, deflate, br","Accept-Language":"zh-cn","Connection":"keep-alive","Content-Type":"application/x-www-form-urlencoded","Host":"api.m.jd.com","Referer":"https://prodev.m.jd.com/mall/active/2iKbfCXwhMX2SVuGDFEcKcDjbtUC/index.html","Origin":"https://prodev.m.jd.com","Cookie":O0000OO000OO00OO0 ,"User-Agent":OOO0O0O00O00OOO00 }#line:228
+            OO0O0OOOOOO00OOO0 =getUUID ("xxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxx")#line:229
+            O0000O0O0O00OOOOO =await O0O00O0000000000O .Get_H5st (O00O000000O0OOO0O ,O0000O0O0O00OOOOO ,OOO0O0O00O00OOO00 ,O0OOO00O0O0O0OO0O ,O0000OO000OO00OO0 )#line:230
+            OO00O00OOOO00OO00 ="https://api.m.jd.com"#line:232
+            async with aiohttp .ClientSession ()as OOOO0OO00O00OO0O0 :#line:233
+                if O0O00O0000000000O .proxy ==False :#line:234
+                    async with OOOO0OO00O00OO0O0 .post (OO00O00OOOO00OO00 ,headers =O0OOOOOO0OO0OOOO0 ,data =O0000O0O0O00OOOOO ,timeout =5 )as O000OOOO00OOOOOOO :#line:235
+                        if O000OOOO00OOOOOOO .status ==200 :#line:236
+                            return await O000OOOO00OOOOOOO .json ()#line:237
+                        else :#line:239
+                            O0O00O0000000000O .log .error (f'重试 请求结果：{O000OOOO00OOOOOOO.status}')#line:240
+                else :#line:241
+                    async with OOOO0OO00O00OO0O0 .post (OO00O00OOOO00OO00 ,headers =O0OOOOOO0OO0OOOO0 ,data =O0000O0O0O00OOOOO ,timeout =5 ,proxy =O0O00O0000000000O .proxy )as O000OOOO00OOOOOOO :#line:242
+                        if O000OOOO00OOOOOOO .status ==200 :#line:243
+                            return await O000OOOO00OOOOOOO .json ()#line:244
+                        else :#line:245
+                            O0O00O0000000000O .log .error (f'重试 请求结果：{O000OOOO00OOOOOOO.status}')#line:246
+                            await O0O00O0000000000O .Get_H5_Api (O00O000000O0OOO0O ,O0000O0O0O00OOOOO ,O0000OO000OO00OO0 ,O0OOO00O0O0O0OO0O )#line:247
+        return await O0O00O0000000000O .retry_with_backoff (lambda :OO0OOO0O00OO00000 (OO0O00O0O00O00O0O ),3 ,'H5st_Api')#line:249
+    async def Result (O00O000000O0OOO00 ,OO000O0OOOOOO00OO ,OO000O0O0OOO00O00 ,OO0O0OO0OO0000OO0 ):#line:251
+        if O00O000000O0OOO00 .exit_condition and len (O00O000000O0OOO00 .power_success )>=O00O000000O0OOO00 .exit_condition :#line:252
+            sys .exit ()#line:253
+        async def OOO0000O0OOO0OO0O ():#line:255
+            O0OO0O0O0OOO000O0 =False #line:256
+            if O00O000000O0OOO00 .verify_result !=True :#line:257
+                O00O000000O0OOO00 .log .error ("授权未通过 退出")#line:258
+                sys .exit ()#line:259
+            for O00OOO00O00O00OOO in O00O000000O0OOO00 .linkId :#line:260
+                OOOO000O0O00OO0O0 =await O00O000000O0OOO00 .Get_H5_Api ("inviteFissionhelp",{'linkId':O00OOO00O00O00OOO ,"isJdApp":True ,'inviter':OO000O0O0OOO00O00 },OO0O0OO0OO0000OO0 ,'c5389')#line:263
+                if int (OOOO000O0O00OO0O0 ['code'])==0 :#line:264
+                    for OOOOO000O0O00O000 ,O0000O0OO0O000000 in O00O000000O0OOO00 .helpResult :#line:265
+                        if OOOO000O0O00OO0O0 ['data']['helpResult']==int (OOOOO000O0O00O000 ):#line:266
+                            O0OO0O0O0OOO000O0 =True #line:267
+                            O00O000000O0OOO00 .log .info (f"Id:{O00OOO00O00O00OOO[:4] + '****' + O00OOO00O00O00OOO[-4:]}|助理:{OOOO000O0O00OO0O0['data']['nickName']}|{OOOO000O0O00OO0O0['data']['helpResult']}|第{OO000O0OOOOOO00OO}次|{O00O000000O0OOO00.pt_pin(OO0O0OO0OO0000OO0)}|{O0000O0OO0O000000}")#line:269
+                            if OOOO000O0O00OO0O0 ['data']['helpResult']==1 :#line:270
+                                O00O000000O0OOO00 .power_success .append (OO0O0OO0OO0000OO0 )#line:271
+                            else :#line:272
+                                O00O000000O0OOO00 .power_failure .append (OO0O0OO0OO0000OO0 )#line:273
+                    if not O0OO0O0O0OOO000O0 :#line:274
+                        O0000O0OO0O000000 ='❌未知状态 (可能是活动未开启！！！)'#line:275
+                        O00O000000O0OOO00 .power_failure .append (OO0O0OO0OO0000OO0 )#line:276
+                        O00O000000O0OOO00 .log .info (f"Id:{O00OOO00O00O00OOO[:4] + '****' + O00OOO00O00O00OOO[-4:]}|助理:{OOOO000O0O00OO0O0['data']['nickName']}|{OOOO000O0O00OO0O0['data']['helpResult']}|第{OO000O0OOOOOO00OO}次|{O00O000000O0OOO00.pt_pin(OO0O0OO0OO0000OO0)}|{O0000O0OO0O000000}")#line:278
+                else :#line:279
+                    O00O000000O0OOO00 .log .info (f"{O00O000000O0OOO00.pt_pin(OO0O0OO0OO0000OO0)}{OOOO000O0O00OO0O0['code']} 结果:💔{OOOO000O0O00OO0O0['errMsg']}")#line:280
+                    O00O000000O0OOO00 .not_log .append (OO0O0OO0OO0000OO0 )#line:281
+        return await O00O000000O0OOO00 .retry_with_backoff (OOO0000O0OOO0OO0O ,3 ,'Result')#line:283
+    async def main (OO00OOO0OOOO0O00O ):#line:285
+        await OO00OOO0OOOO0O00O .verify ()#line:286
+        await OO00OOO0OOOO0O00O .LinkId ()#line:287
+        if OO00OOO0OOOO0O00O .verify_result !=True :#line:288
+            await OO00OOO0OOOO0O00O .verify ()#line:289
+        if OO00OOO0OOOO0O00O .verify_result !=True :#line:290
+            OO00OOO0OOOO0O00O .log .error ("授权未通过 退出")#line:291
+            sys .exit ()#line:292
+        for O0O000OO0OO0O00OO in OO00OOO0OOOO0O00O .linkId :#line:293
+            O0OO00O0O0O0OOOOO =await OO00OOO0OOOO0O00O .Get_H5_Api ("inviteFissionhelp",{'linkId':O0O000OO0OO0O00OO ,"isJdApp":True ,'inviter':OO00OOO0OOOO0O00O .inviter_help },OO00OOO0OOOO0O00O .coookie ,'c5389')#line:296
+            if O0OO00O0O0O0OOOOO ['success']==False and O0OO00O0O0O0OOOOO ['code']==1000 :#line:297
+                OO00OOO0OOOO0O00O .log .info (f"{O0OO00O0O0O0OOOOO['errMsg']}")#line:298
+                sys .exit ()#line:299
+            if O0OO00O0O0O0OOOOO ['data']['helpResult']==1 :#line:300
+                OO00OOO0OOOO0O00O .log .info (f'{OO00OOO0OOOO0O00O.pt_pin(OO00OOO0OOOO0O00O.coookie)} ✅助力作者成功 谢谢你 你是个好人！！！')#line:301
+            else :#line:302
+                OO00OOO0OOOO0O00O .log .info (f'{OO00OOO0OOOO0O00O.pt_pin(OO00OOO0OOOO0O00O.coookie)} ❌助理作者失败 下次记得把助理留给我 呜呜呜！！！')#line:303
+        if OO00OOO0OOOO0O00O .inviter ==False :#line:305
+            for O0O000OO0OO0O00OO in OO00OOO0OOOO0O00O .linkId :#line:306
+                O0OO00O0O0O0OOOOO =await OO00OOO0OOOO0O00O .Get_H5_Api ('inviteFissionHome',{'linkId':O0O000OO0OO0O00OO ,"inviter":"",},OO00OOO0OOOO0O00O .coookie ,'af89e')#line:308
+                OO00OOO0OOOO0O00O .log .info (f'{OO00OOO0OOOO0O00O.pt_pin(OO00OOO0OOOO0O00O.coookie)} ⏰剩余时间:{OO00OOO0OOOO0O00O.convert_ms_to_hours_minutes(O0OO00O0O0O0OOOOO["data"]["countDownTime"])} 🎉已获取助力:{O0OO00O0O0O0OOOOO["data"]["prizeNum"] + O0OO00O0O0O0OOOOO["data"]["drawPrizeNum"]}次 ✅【LinkId】:{O0O000OO0OO0O00OO}')#line:310
+                OO00OOO0OOOO0O00O .inviter =O0OO00O0O0O0OOOOO ["data"]["inviter"]#line:311
+            OO00OOO0OOOO0O00O .log .info (f'{OO00OOO0OOOO0O00O.pt_pin(OO00OOO0OOOO0O00O.coookie)} ✅助理码: {OO00OOO0OOOO0O00O.inviter}')#line:312
+        if OO00OOO0OOOO0O00O .proxy !=False :#line:314
+            OO00OOO0OOOO0O00O .log .info (f"##############开始并发[线程数:{OO00OOO0OOOO0O00O.semaphore._value}]##############")#line:315
+            O0O00O00OO0OOO0O0 =[]#line:316
+            async def O0O0O00OOO0OO0000 (OO0000O00O0O000O0 ,O0OO00OO00OO000O0 ):#line:324
+                async with OO00OOO0OOOO0O00O .semaphore :#line:325
+                    OOOO0OOO0O00OO0OO =asyncio .create_task (OO00OOO0OOOO0O00O .Result (OO0000O00O0O000O0 ,OO00OOO0OOOO0O00O .inviter ,O0OO00OO00OO000O0 ))#line:326
+                    if OO00OOO0OOOO0O00O .exit_condition and len (OO00OOO0OOOO0O00O .power_success )>=OO00OOO0OOOO0O00O .exit_condition :#line:327
+                        sys .exit ()#line:328
+                    return await OOOO0OOO0O00OO0OO #line:329
+            async def O00O00OO000OOOO00 ():#line:331
+                OOOOOO000OO0OO00O =[]#line:332
+                for O0OOO00O0O000OOOO ,OO0OO00O00O0000O0 in enumerate (ck ,1 ):#line:333
+                    if OO00OOO0OOOO0O00O .exit_condition and len (OO00OOO0OOOO0O00O .power_success )>=OO00OOO0OOOO0O00O .exit_condition :#line:334
+                        sys .exit ()#line:335
+                    OO0OOOO00OOOO0000 =asyncio .create_task (O0O0O00OOO0OO0000 (O0OOO00O0O000OOOO ,OO0OO00O00O0000O0 ))#line:336
+                    OOOOOO000OO0OO00O .append (OO0OOOO00OOOO0000 )#line:337
+                await asyncio .gather (*OOOOOO000OO0OO00O )#line:339
+            await O00O00OO000OOOO00 ()#line:342
+        else :#line:348
+            OO00OOO0OOOO0O00O .log .info (f"##############开始任务##############")#line:349
+            for OOO0OOO00000OOO0O ,OOOOO00O0OO0OOO00 in enumerate (ck ,1 ):#line:350
+                await OO00OOO0OOOO0O00O .Result (OOO0OOO00000OOO0O ,OO00OOO0OOOO0O00O .inviter ,OOOOO00O0OO0OOO00 )#line:351
+                if OO00OOO0OOOO0O00O .exit_condition and len (OO00OOO0OOOO0O00O .power_success )>=OO00OOO0OOOO0O00O .exit_condition :#line:352
+                    sys .exit ()#line:353
+                await asyncio .sleep (0.5 )#line:354
+        OO00OOO0OOOO0O00O .log .info (f"##############清点人数##############")#line:356
+        OO00OOO0OOOO0O00O .log .info (f"✅助力成功:{len(OO00OOO0OOOO0O00O.power_success)}人 ❌助力失败:{len(OO00OOO0OOOO0O00O.power_failure)}人 💔未登录CK{len(OO00OOO0OOOO0O00O.not_log)}人")#line:358
+        OO00OOO0OOOO0O00O .log .info (f" ⏰耗时:{time.time() - OO00OOO0OOOO0O00O.start}")#line:359
+if __name__ =='__main__':#line:362
+    pdd =TEN_JD_PDD ()#line:363
+    loop =asyncio .get_event_loop ()#line:364
+    loop .run_until_complete (pdd .main ())#line:365
+    loop .close ()#line:366
