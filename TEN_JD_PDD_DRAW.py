@@ -35,7 +35,7 @@ class TEN_JD_PDD_DRAW (object ):#line:27
         OO0O0OOO0OO0OOO00 .amount =0 #line:38
         OO0O0OOO0OO0OOO00 .leftAmount =0 #line:39
         OO0O0OOO0OO0OOO00 .verify_result =False #line:40
-        OO0O0OOO0OO0OOO00 .txj_status =os .environ .get ("draw_cookie")if os .environ .get ("draw_cookie")else (OO0O0OOO0OO0OOO00 .scode ==3 )#line:41
+        OO0O0OOO0OO0OOO00 .txj_status =os .environ .get ("txj_status")if os .environ .get ("txj_status")else (OO0O0OOO0OO0OOO00 .scode ==3 )#line:41
         OO0O0OOO0OO0OOO00 .inviter =''#line:42
         OO0O0OOO0OO0OOO00 .power_success =[]#line:43
         OO0O0OOO0OO0OOO00 .power_failure =[]#line:44
