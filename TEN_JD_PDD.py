@@ -231,7 +231,7 @@ class TEN_JD_PDD :#line:27
                 OOOO0O0O0O000OOO0 .log .info (f'{OOOO0O0O0O000OOO0.pt_pin(OOOO0O0O0O000OOO0.coookie)} ❌助理作者失败 下次记得把助理留给我 呜呜呜！！！')#line:303
         if OOOO0O0O0O000OOO0 .inviter ==False :#line:305
             for O0O0OO00000O00000 in OOOO0O0O0O000OOO0 .linkId :#line:306
-                OO000OOOO0OO0OOO0 =await OOOO0O0O0O000OOO0 .Get_H5_Api ('inviteFissionHome',{'linkId':O0O0OO00000O00000 ,"inviter":"",},OOOO0O0O0O000OOO0 .coookie ,'eb67b'if O0O0OO00000O00000 in 'EcuVpjGGfccY3Ic_1ni83w'else 'af89e')#line:308
+                OO000OOOO0OO0OOO0 =await OOOO0O0O0O000OOO0 .Get_H5_Api ('inviteFissionHome',{'linkId':O0O0OO00000O00000 ,"inviter":"",},OOOO0O0O0O000OOO0 .coookie ,'eb67b')#line:308
                 OOOO0O0O0O000OOO0 .log .info (f'{OOOO0O0O0O000OOO0.pt_pin(OOOO0O0O0O000OOO0.coookie)} ⏰剩余时间:{OOOO0O0O0O000OOO0.convert_ms_to_hours_minutes(OO000OOOO0OO0OOO0["data"]["countDownTime"])} 🎉已获取助力:{OO000OOOO0OO0OOO0["data"]["prizeNum"] + OO000OOOO0OO0OOO0["data"]["drawPrizeNum"]}次 ✅【LinkId】:{O0O0OO00000O00000}')#line:310
                 OOOO0O0O0O000OOO0 .inviter =OO000OOOO0OO0OOO0 ["data"]["inviter"]#line:311
             OOOO0O0O0O000OOO0 .log .info (f'{OOOO0O0O0O000OOO0.pt_pin(OOOO0O0O0O000OOO0.coookie)} ✅助理码: {OOOO0O0O0O000OOO0.inviter}')#line:312

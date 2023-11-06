@@ -302,7 +302,7 @@ class TEN_JD_PDD_DRAW (object ):#line:27
         OO00O0OOO0000OOOO =O00000OO000O0O0O0 .cookie #line:424
         if O00000OO000O0O0O0 .txj_status :#line:425
             try :#line:426
-                OO00O0OO000O0O000 =await O00000OO000O0O0O0 .Get_H5st ('inviteFissionHome',OO00O0OOO0000OOOO ,{'linkId':O00000OO000O0O0O0 .linkId [0 ],"inviter":"",},'eb67b'if O00000OO000O0O0O0 .linkId [0 ]in 'EcuVpjGGfccY3Ic_1ni83w'else 'af89e')#line:428
+                OO00O0OO000O0O000 =await O00000OO000O0O0O0 .Get_H5st ('inviteFissionHome',OO00O0OOO0000OOOO ,{'linkId':O00000OO000O0O0O0 .linkId [0 ],"inviter":"",},'eb67b')#line:428
                 if not OO00O0OO000O0O000 ['success']and OO00O0OO000O0O000 ['errMsg']=='未登录':#line:430
                     O00000OO000O0O0O0 .log .error (f"{OO00O0OO000O0O000['errMsg']}")#line:431
                     return #line:432
